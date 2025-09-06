@@ -2,9 +2,10 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useCart } from "@/contexts/CartContext"
-import { Crown, Gift, ShoppingCart } from "lucide-react"
+import { Gift, ShoppingCart } from "lucide-react"
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -14,13 +15,16 @@ export default function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-accent via-white to-amber-200 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105">
-              <Crown className="w-6 h-6 text-primary" />
+          <Link href="/" className="flex items-center group">
+            <div className="relative w-12 h-12 group-hover:scale-105 transition-all duration-300">
+              <Image
+                src="/savron-logo.png"
+                alt="Savron Chocolate Logo"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
-            <span className="text-2xl font-serif font-bold bg-gradient-to-r from-accent via-white to-amber-200 bg-clip-text text-transparent">
-              Savron
-            </span>
           </Link>
 
           {/* Centered Navigation Links */}
