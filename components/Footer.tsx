@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { Crown, Instagram, Facebook, Twitter } from "lucide-react"
+import { Instagram, Facebook, Twitter } from "lucide-react"
+import Image from "next/image"
 
 export default function Footer() {
   return (
@@ -13,10 +14,15 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-12">
           <div className="space-y-6">
             <div className="flex items-center">
-              <Crown className="w-8 h-8 text-accent mr-3" />
-              <h3 className="text-3xl font-serif font-bold bg-gradient-to-r from-background to-accent bg-clip-text text-transparent">
-                Savron
-              </h3>
+              <div className="relative w-100 h-60">
+                <Image
+                  src="/savron-logo.png"
+                  alt="Savron Chocolate Logo"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
             </div>
             <p className="text-base opacity-90 text-pretty leading-relaxed font-light">
               Crafting exceptional chocolates since 1952. Experience luxury in every bite of our artisan creations.

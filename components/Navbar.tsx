@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useCart } from "@/contexts/CartContext"
 import { Gift, ShoppingCart } from "lucide-react"
+import Image from "next/image"
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -16,7 +16,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
           <Link href="/" className="flex items-center group">
-            <div className="relative w-12 h-12 group-hover:scale-105 transition-all duration-300">
+            <div className="relative w-80 h-48  transition-all duration-300 -ml-18 -mt-0 -mb-4">
               <Image
                 src="/savron-logo.png"
                 alt="Savron Chocolate Logo"
