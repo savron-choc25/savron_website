@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-12">
           <div className="space-y-6">
             <div className="flex items-center">
-              <div className="relative w-100 h-60">
+              <div className="relative w-100 h-60 -mt-20">
                 <Image
                   src="/savron-logo.png"
                   alt="Savron Chocolate Logo"
