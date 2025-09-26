@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useToast } from "@/contexts/ToastContext"
+import Image from "next/image"
 import { 
   Plus, 
   Package, 
@@ -28,7 +29,9 @@ import {
   TrendingUp,
   Users,
   ShoppingCart,
-  Loader2
+  Loader2,
+  Lock,
+  User
 } from "lucide-react"
 
 interface Product {
@@ -58,6 +61,11 @@ export default function AdminDashboard() {
   const [submitting, setSubmitting] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [checkingAuth, setCheckingAuth] = useState(true)
+  const [loginForm, setLoginForm] = useState({
+    username: "",
+    password: ""
+  })
+  const [loginLoading, setLoginLoading] = useState(false)
   
   // Form state for adding new product
   const [formData, setFormData] = useState({
@@ -109,6 +117,45 @@ export default function AdminDashboard() {
     localStorage.removeItem("adminLoggedIn")
     localStorage.removeItem("adminSession")
     router.push("/admin-login")
+  }
+
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!loginForm.username || !loginForm.password) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setLoginLoading(true)
+
+    // Simple admin credentials check
+    if (loginForm.username === "admin" && loginForm.password === "savron2024") {
+      // Store admin session
+      localStorage.setItem("adminLoggedIn", "true")
+      localStorage.setItem("adminSession", Date.now().toString())
+      
+      toast({
+        title: "Success",
+        description: "Login successful! Redirecting to dashboard...",
+        variant: "success"
+      })
+      
+      setIsAuthenticated(true)
+      fetchProducts()
+    } else {
+      toast({
+        title: "Error",
+        description: "Invalid username or password",
+        variant: "destructive"
+      })
+    }
+
+    setLoginLoading(false)
   }
 
   const handleDeleteProduct = async (productId: string) => {
@@ -339,9 +386,86 @@ export default function AdminDashboard() {
     )
   }
 
-  // Redirect to login if not authenticated
+  // Show login form if not authenticated
   if (!isAuthenticated) {
-    return null
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary via-primary/90 to-accent flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <Image
+              src="/savron-logo.png"
+              alt="Savron Chocolates"
+              width={200}
+              height={80}
+              className="mx-auto mb-4"
+            />
+            <h1 className="text-3xl font-bold text-white">Admin Portal</h1>
+            <p className="text-white/80 mt-2">Savron Chocolates Management</p>
+          </div>
+
+          {/* Login Form */}
+          <Card className="bg-white/90 backdrop-blur-sm shadow-2xl">
+            <CardHeader className="text-center">
+              <CardTitle className="flex items-center justify-center gap-2 text-2xl">
+                <Lock className="h-6 w-6 text-primary" />
+                Admin Login
+              </CardTitle>
+              <p className="text-gray-600">Enter your credentials to access the dashboard</p>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleLoginSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="username"
+                      type="text"
+                      value={loginForm.username}
+                      onChange={(e) => setLoginForm(prev => ({ ...prev, username: e.target.value }))}
+                      placeholder="Enter username"
+                      className="pl-10"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="password"
+                      type="password"
+                      value={loginForm.password}
+                      onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
+                      placeholder="Enter password"
+                      className="pl-10"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold"
+                  disabled={loginLoading}
+                >
+                  {loginLoading ? "Signing In..." : "Sign In"}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-500">
+                  Default credentials: admin / savron2024
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
   }
 
   return (
