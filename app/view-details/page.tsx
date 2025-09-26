@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import Navbar from "@/components/Navbar"
 import { useCart, cartUtils } from "@/contexts/CartContext"
+import { useToast } from "@/contexts/ToastContext"
 import { getProductById, Product } from "@/data/products"
 import { 
   ArrowLeft, 
@@ -33,6 +34,7 @@ import {
 
 export default function ProductDetailsPage() {
   const { dispatch } = useCart()
+  const { toast } = useToast()
   const searchParams = useSearchParams()
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
@@ -63,8 +65,11 @@ export default function ProductDetailsPage() {
       inStock: currentProduct.inStock
     })
     
-    // Show success message (you could add a toast notification here)
-    alert(`${currentProduct.name} added to cart!`)
+    toast({
+      title: "Product successfully added to cart",
+      description: `${currentProduct.name} has been added to your cart.`,
+      variant: "success",
+    })
   }
 
   const nextImage = () => {

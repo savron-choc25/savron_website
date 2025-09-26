@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import { useCart, cartUtils } from "@/contexts/CartContext"
+import { useToast } from "@/contexts/ToastContext"
 import {
   Star,
   Award,
@@ -15,11 +17,101 @@ import {
   Sparkles,
   Zap,
   Crown,
+  Loader2,
 } from "lucide-react"
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
+import Link from "next/link"
+import { products as defaultProducts } from "@/data/products"
 
 export default function SavronHomepage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const { dispatch } = useCart()
+  const { toast } = useToast()
+  const [products, setProducts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/products')
+      let adminProducts = []
+      
+      if (response.ok) {
+        adminProducts = await response.json()
+      } else {
+        console.error('Failed to fetch admin products')
+      }
+
+      // Convert default products to match the database format
+      const convertedDefaultProducts = defaultProducts.map(product => ({
+        _id: `default-${product.id}`,
+        name: product.name,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+        images: product.images,
+        inStock: product.inStock,
+        weight: "100g",
+        origin: "Belgium",
+        ingredients: product.ingredients,
+        allergens: ["Milk", "Soy"],
+        badges: product.badges,
+        rating: product.rating,
+        reviews: product.reviews.length
+      }))
+
+      // Combine default products with admin products
+      const allProducts = [...convertedDefaultProducts, ...adminProducts]
+      setProducts(allProducts)
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      // If there's an error, still show default products
+      const convertedDefaultProducts = defaultProducts.map(product => ({
+        _id: `default-${product.id}`,
+        name: product.name,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+        images: product.images,
+        inStock: product.inStock,
+        weight: "100g",
+        origin: "Belgium",
+        ingredients: product.ingredients,
+        allergens: ["Milk", "Soy"],
+        badges: product.badges,
+        rating: product.rating,
+        reviews: product.reviews.length
+      }))
+      setProducts(convertedDefaultProducts)
+      toast({
+        title: "Warning",
+        description: "Showing default products only. Admin products unavailable.",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleAddToCart = (product: any) => {
+    cartUtils.addToCart(dispatch, {
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0] || '/placeholder.jpg',
+      description: product.description,
+      inStock: product.inStock
+    })
+    toast({
+      title: "Product successfully added to cart",
+      description: `${product.name} has been added to your cart.`,
+      variant: "success",
+    })
+  }
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -719,13 +811,13 @@ export default function SavronHomepage() {
                     alt="Master chocolatier at work"
                     className="w-full h-full object-cover"
                   />
-                </div>
-                
+            </div>
+
                 {/* Floating Decorative Elements */}
                 <div className="absolute -top-8 -right-8 w-16 h-16 bg-gradient-to-br from-accent to-primary rounded-full animate-bounce shadow-2xl"></div>
                 <div className="absolute -bottom-6 -left-6 w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full animate-pulse shadow-xl"></div>
                 <div className="absolute top-1/3 -left-3 w-8 h-8 bg-gradient-to-br from-accent/80 to-primary/80 rounded-full animate-pulse delay-300 shadow-lg"></div>
-              </div>
+            </div>
             </div>
           </div>
         </div>

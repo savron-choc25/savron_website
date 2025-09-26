@@ -1,12 +1,15 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useCart, cartUtils } from "@/contexts/CartContext"
+import { useToast } from "@/contexts/ToastContext"
 import Link from "next/link"
+import { products as defaultProducts } from "@/data/products"
 import { 
   Star, 
   Heart, 
@@ -23,145 +26,112 @@ import {
   Filter,
   Search,
   Grid,
-  List
+  List,
+  Loader2
 } from "lucide-react"
-import { useState } from "react"
 
 export default function CollectionsPage() {
   const { dispatch } = useCart()
+  const { toast } = useToast()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [products, setProducts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const handleAddToCart = (collection: any) => {
-    cartUtils.addToCart(dispatch, {
-      id: collection.id,
-      name: collection.name,
-      price: collection.price || 45,
-      image: collection.image,
-      description: collection.description,
-      inStock: true
-    })
-    alert(`${collection.name} added to cart!`)
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/products')
+      let adminProducts = []
+      
+      if (response.ok) {
+        adminProducts = await response.json()
+      } else {
+        console.error('Failed to fetch admin products')
+      }
+
+      // Convert default products to match the database format
+      const convertedDefaultProducts = defaultProducts.map(product => ({
+        _id: `default-${product.id}`,
+        name: product.name,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+        images: product.images,
+        inStock: product.inStock,
+        weight: "100g",
+        origin: "Belgium",
+        ingredients: product.ingredients,
+        allergens: ["Milk", "Soy"],
+        badges: product.badges,
+        rating: product.rating,
+        reviews: product.reviews.length
+      }))
+
+      // Combine default products with admin products
+      const allProducts = [...convertedDefaultProducts, ...adminProducts]
+      setProducts(allProducts)
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      // If there's an error, still show default products
+      const convertedDefaultProducts = defaultProducts.map(product => ({
+        _id: `default-${product.id}`,
+        name: product.name,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+        images: product.images,
+        inStock: product.inStock,
+        weight: "100g",
+        origin: "Belgium",
+        ingredients: product.ingredients,
+        allergens: ["Milk", "Soy"],
+        badges: product.badges,
+        rating: product.rating,
+        reviews: product.reviews.length
+      }))
+      setProducts(convertedDefaultProducts)
+      toast({
+        title: "Warning",
+        description: "Showing default products only. Admin products unavailable.",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const collections = [
-    {
-      id: 1,
-      name: "Dark Elegance",
-      description: "Rich, intense dark chocolates with cocoa content ranging from 70% to 90%",
-      image: "/dark-chocolate-collection-luxury-packaging.jpg",
-      products: 12,
-      price: "From $45",
-      featured: true,
-      badge: "Bestseller",
-      category: "dark",
-      rating: 4.9,
-      reviews: 128,
-    },
-    {
-      id: 2,
-      name: "Milk Harmony",
-      description: "Smooth and creamy milk chocolates with delicate flavor profiles",
-      image: "/milk-chocolate-truffles-with-gold-accents.jpg",
-      products: 8,
-      price: "From $38",
-      featured: false,
-      badge: "New",
-      category: "milk",
-      rating: 4.8,
-      reviews: 95,
-    },
-    {
-      id: 3,
-      name: "White Luxury",
-      description: "Premium white chocolates infused with exotic flavors and botanicals",
-      image: "/white-chocolate-bonbons-with-berry-decorations.jpg",
-      products: 10,
-      price: "From $42",
-      featured: true,
-      badge: "Limited",
-      category: "white",
-      rating: 4.7,
-      reviews: 87,
-    },
-    {
-      id: 4,
-      name: "Artisan Truffles",
-      description: "Hand-crafted truffles with unique flavor combinations and textures",
-      image: "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg",
-      products: 15,
-      price: "From $55",
-      featured: true,
-      badge: "Premium",
-      category: "truffles",
-      rating: 5.0,
-      reviews: 156,
-    },
-    {
-      id: 5,
-      name: "Espresso Delight",
-      description: "Dark chocolate infused with rich espresso",
-      image: "/dark-chocolate-collection-luxury-packaging.jpg",
-      products: 6,
-      price: "From $35",
-      featured: false,
-      badge: "Popular",
-      category: "dark",
-      rating: 4.6,
-      reviews: 73,
-    },
-    {
-      id: 6,
-      name: "Sea Salt Caramel",
-      description: "Smooth caramel with Himalayan sea salt",
-      image: "/milk-chocolate-truffles-with-gold-accents.jpg",
-      products: 9,
-      price: "From $40",
-      featured: false,
-      badge: "Classic",
-      category: "milk",
-      rating: 4.8,
-      reviews: 112,
-    },
-    {
-      id: 7,
-      name: "Raspberry Dream",
-      description: "White chocolate with fresh raspberry swirls",
-      image: "/white-chocolate-bonbons-with-berry-decorations.jpg",
-      products: 7,
-      price: "From $38",
-      featured: false,
-      badge: "Seasonal",
-      category: "white",
-      rating: 4.5,
-      reviews: 64,
-    },
-    {
-      id: 8,
-      name: "Hazelnut Crunch",
-      description: "Milk chocolate with roasted hazelnuts",
-      image: "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg",
-      products: 11,
-      price: "From $36",
-      featured: false,
-      badge: "Nutty",
-      category: "milk",
-      rating: 4.7,
-      reviews: 89,
-    },
-  ]
+  const handleAddToCart = (product: any) => {
+    cartUtils.addToCart(dispatch, {
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0] || '/placeholder.jpg',
+      description: product.description,
+      inStock: product.inStock
+    })
+    toast({
+      title: "Product successfully added to cart",
+      description: `${product.name} has been added to your cart.`,
+      variant: "success",
+    })
+  }
+
+  const filteredProducts = products.filter(product => {
+    return selectedCategory === 'all' || product.category.toLowerCase() === selectedCategory
+  })
 
   const categories = [
-    { id: 'all', name: 'All Collections', count: collections.length },
-    { id: 'dark', name: 'Dark Chocolate', count: collections.filter(c => c.category === 'dark').length },
-    { id: 'milk', name: 'Milk Chocolate', count: collections.filter(c => c.category === 'milk').length },
-    { id: 'white', name: 'White Chocolate', count: collections.filter(c => c.category === 'white').length },
-    { id: 'truffles', name: 'Truffles', count: collections.filter(c => c.category === 'truffles').length },
+    { id: 'all', name: 'All Collections', count: products.length },
+    { id: 'dark chocolate', name: 'Dark Chocolate', count: products.filter(p => p.category.toLowerCase() === 'dark chocolate').length },
+    { id: 'milk chocolate', name: 'Milk Chocolate', count: products.filter(p => p.category.toLowerCase() === 'milk chocolate').length },
+    { id: 'white chocolate', name: 'White Chocolate', count: products.filter(p => p.category.toLowerCase() === 'white chocolate').length },
+    { id: 'truffles', name: 'Truffles', count: products.filter(p => p.category.toLowerCase() === 'truffles').length },
   ]
-
-  const filteredCollections = selectedCategory === 'all' 
-    ? collections 
-    : collections.filter(c => c.category === selectedCategory)
 
   return (
     <div className="min-h-screen bg-[#fff5d6]">
@@ -266,57 +236,52 @@ export default function CollectionsPage() {
         <div className="container mx-auto">
           {viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {filteredCollections.map((collection) => (
-                <Card
-                  key={collection.id}
+              {filteredProducts.map((product) => (
+              <Card
+                key={product._id}
                   className="group cursor-pointer overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-white/80 backdrop-blur-sm rounded-2xl"
-                >
+              >
                   <div className="aspect-square overflow-hidden relative">
-                    <img
-                      src={collection.image || "/placeholder.svg"}
-                      alt={collection.name}
+                  <img
+                    src={product.images[0] || "/placeholder.svg"}
+                    alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                     
                     {/* Premium Badge */}
                     <div className="absolute top-3 left-3">
                       <Badge
-                        variant={collection.badge === "Bestseller" ? "default" : "secondary"}
+                        variant={product.inStock ? "default" : "destructive"}
                         className={
-                          collection.badge === "Bestseller"
-                            ? "bg-gradient-to-r from-primary to-red-800 text-white shadow-xl font-semibold px-3 py-1"
-                            : collection.badge === "New"
-                            ? "bg-gradient-to-r from-accent to-amber-600 text-white shadow-xl font-semibold px-3 py-1"
-                            : "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl font-semibold px-3 py-1"
+                          product.inStock
+                            ? "bg-gradient-to-r from-green-600 to-green-800 text-white shadow-xl font-semibold px-3 py-1"
+                            : "bg-gradient-to-r from-red-600 to-red-800 text-white shadow-xl font-semibold px-3 py-1"
                         }
                       >
-                        {collection.badge === "New" && <Zap className="w-3 h-3 mr-1" />}
-                        {collection.badge === "Bestseller" && <Crown className="w-3 h-3 mr-1" />}
-                        {collection.badge === "Limited" && <Sparkles className="w-3 h-3 mr-1" />}
-                        {collection.badge}
-                      </Badge>
+                        {product.inStock ? "In Stock" : "Out of Stock"}
+                    </Badge>
                     </div>
                     
                     {/* Heart Button */}
-                    <Button
-                      size="sm"
-                      variant="ghost"
+                  <Button
+                    size="sm"
+                    variant="ghost"
                       className="absolute top-3 right-3 text-white hover:text-red-400 hover:bg-white/20"
-                    >
-                      <Heart className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  >
+                    <Heart className="h-4 w-4" />
+                  </Button>
+                </div>
                   
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="text-xl font-serif font-bold text-primary group-hover:text-accent transition-colors">
-                        {collection.name}
+                        {product.name}
                       </h3>
-                      <span className="text-lg font-semibold text-accent">{collection.price}</span>
+                      <span className="text-lg font-semibold text-accent">${product.price}</span>
                     </div>
                     
                     <p className="text-muted-foreground text-sm mb-4 leading-relaxed font-light">
-                      {collection.description}
+                      {product.description}
                     </p>
                     
                     {/* Rating */}
@@ -326,7 +291,7 @@ export default function CollectionsPage() {
                           <Star
                             key={i}
                             className={`w-4 h-4 ${
-                              i < Math.floor(collection.rating)
+                              i < 4
                                 ? "fill-accent text-accent"
                                 : "text-gray-300"
                             }`}
@@ -334,15 +299,15 @@ export default function CollectionsPage() {
                         ))}
                       </div>
                       <span className="text-sm text-muted-foreground">
-                        {collection.rating} ({collection.reviews} reviews)
+                        {4.8} (128 reviews)
                       </span>
                     </div>
                     
                     <div className="flex justify-between items-center mb-4">
-                      <span className="text-sm text-muted-foreground">{collection.products} products</span>
+                      <span className="text-sm text-muted-foreground">{product.category}</span>
                     </div>
                     
-                    <Link href={`/view-details?id=${collection.id}`}>
+                    <Link href={`/view-details?id=${product._id}`}>
                       <Button
                         className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                       >
@@ -358,35 +323,30 @@ export default function CollectionsPage() {
             </div>
           ) : (
             <div className="space-y-6">
-              {filteredCollections.map((collection) => (
+              {filteredProducts.map((product) => (
                 <Card
-                  key={collection.id}
+                  key={product._id}
                   className="group cursor-pointer overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm rounded-2xl"
                 >
                   <div className="flex flex-col md:flex-row">
                     <div className="md:w-1/3 aspect-square md:aspect-auto overflow-hidden relative">
                       <img
-                        src={collection.image || "/placeholder.svg"}
-                        alt={collection.name}
+                        src={product.images[0] || "/placeholder.svg"}
+                        alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       
                       {/* Premium Badge */}
                       <div className="absolute top-3 left-3">
                         <Badge
-                          variant={collection.badge === "Bestseller" ? "default" : "secondary"}
+                          variant={product.inStock ? "default" : "destructive"}
                           className={
-                            collection.badge === "Bestseller"
-                              ? "bg-gradient-to-r from-primary to-red-800 text-white shadow-xl font-semibold px-3 py-1"
-                              : collection.badge === "New"
-                              ? "bg-gradient-to-r from-accent to-amber-600 text-white shadow-xl font-semibold px-3 py-1"
-                              : "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl font-semibold px-3 py-1"
+                            product.inStock
+                              ? "bg-gradient-to-r from-green-600 to-green-800 text-white shadow-xl font-semibold px-3 py-1"
+                              : "bg-gradient-to-r from-red-600 to-red-800 text-white shadow-xl font-semibold px-3 py-1"
                           }
                         >
-                          {collection.badge === "New" && <Zap className="w-3 h-3 mr-1" />}
-                          {collection.badge === "Bestseller" && <Crown className="w-3 h-3 mr-1" />}
-                          {collection.badge === "Limited" && <Sparkles className="w-3 h-3 mr-1" />}
-                          {collection.badge}
+                          {product.inStock ? "In Stock" : "Out of Stock"}
                         </Badge>
                       </div>
                     </div>
@@ -394,13 +354,13 @@ export default function CollectionsPage() {
                     <div className="md:w-2/3 p-6">
                       <div className="flex justify-between items-start mb-3">
                         <h3 className="text-2xl font-serif font-bold text-primary group-hover:text-accent transition-colors">
-                          {collection.name}
+                          {product.name}
                         </h3>
-                        <span className="text-xl font-semibold text-accent">{collection.price}</span>
+                        <span className="text-xl font-semibold text-accent">${product.price}</span>
                       </div>
                       
                       <p className="text-muted-foreground mb-4 leading-relaxed font-light">
-                        {collection.description}
+                        {product.description}
                       </p>
                       
                       {/* Rating */}
@@ -410,7 +370,7 @@ export default function CollectionsPage() {
                             <Star
                               key={i}
                               className={`w-4 h-4 ${
-                                i < Math.floor(collection.rating)
+                                i < 4
                                   ? "fill-accent text-accent"
                                   : "text-gray-300"
                               }`}
@@ -418,28 +378,28 @@ export default function CollectionsPage() {
                           ))}
                         </div>
                         <span className="text-sm text-muted-foreground">
-                          {collection.rating} ({collection.reviews} reviews)
+                          {4.8} (128 reviews)
                         </span>
-                      </div>
+                  </div>
                       
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">{collection.products} products</span>
-                        <Link href={`/view-details?id=${collection.id}`}>
+                  <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">{product.category}</span>
+                        <Link href={`/view-details?id=${product._id}`}>
                           <Button
                             className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                           >
                             <span className="flex items-center justify-center">
-                              Explore Collection
+                      Explore Collection
                               <ChevronRight className="w-4 h-4 ml-2" />
                             </span>
-                          </Button>
+                    </Button>
                         </Link>
                       </div>
                     </div>
                   </div>
-                </Card>
-              ))}
-            </div>
+              </Card>
+            ))}
+          </div>
           )}
         </div>
       </section>
@@ -453,7 +413,7 @@ export default function CollectionsPage() {
         <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-gradient-to-br from-accent/10 to-primary/10 rounded-full blur-3xl"></div>
         
         <div className="container mx-auto relative">
-          <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center">
             <Badge
               variant="secondary"
               className="w-fit bg-gradient-to-r from-primary/15 to-accent/15 border-primary/30 text-primary font-semibold px-6 py-3 mb-8 shadow-lg"
@@ -469,18 +429,18 @@ export default function CollectionsPage() {
             </h2>
             
             <p className="text-xl text-muted-foreground mb-12 leading-relaxed font-light max-w-2xl mx-auto">
-              Try our curated tasting box featuring selections from all our premium collections. 
+            Try our curated tasting box featuring selections from all our premium collections.
               Perfect for discovering your new favorite flavors.
-            </p>
+          </p>
             
-            <Button
-              size="lg"
+          <Button
+            size="lg"
               className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-bold px-12 py-6 rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 text-lg"
-            >
+          >
               <Gift className="w-5 h-5 mr-3" />
-              Order Tasting Box
+            Order Tasting Box
               <ChevronRight className="w-5 h-5 ml-3" />
-            </Button>
+          </Button>
           </div>
         </div>
       </section>

@@ -9,9 +9,11 @@ import { Star, Heart, ShoppingCart, Filter, Grid, List } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useCart, cartUtils } from "@/contexts/CartContext"
+import { useToast } from "@/contexts/ToastContext"
 
 export default function ShopPage() {
   const { dispatch } = useCart()
+  const { toast } = useToast()
 
   const handleAddToCart = (product: any) => {
     cartUtils.addToCart(dispatch, {
@@ -22,7 +24,11 @@ export default function ShopPage() {
       description: product.description,
       inStock: true
     })
-    alert(`${product.name} added to cart!`)
+    toast({
+      title: "Product successfully added to cart",
+      description: `${product.name} has been added to your cart.`,
+      variant: "success",
+    })
   }
 
   const products = [
