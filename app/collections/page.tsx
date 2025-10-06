@@ -67,6 +67,7 @@ export default function CollectionsPage() {
         origin: "Belgium",
         ingredients: product.ingredients,
         allergens: ["Milk", "Soy"],
+        features: product.features || [],
         badges: product.badges,
         rating: product.rating,
         reviews: product.reviews.length
@@ -90,6 +91,7 @@ export default function CollectionsPage() {
         origin: "Belgium",
         ingredients: product.ingredients,
         allergens: ["Milk", "Soy"],
+        features: product.features || [],
         badges: product.badges,
         rating: product.rating,
         reviews: product.reviews.length
@@ -248,7 +250,7 @@ export default function CollectionsPage() {
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                     
-                    {/* Premium Badge */}
+                    {/* Stock Status Badge */}
                     <div className="absolute top-3 left-3">
                       <Badge
                         variant={product.inStock ? "default" : "destructive"}
@@ -261,6 +263,16 @@ export default function CollectionsPage() {
                         {product.inStock ? "In Stock" : "Out of Stock"}
                     </Badge>
                     </div>
+                    
+                    {/* Premium Badge */}
+                    {product.premium && (
+                      <div className="absolute top-3 right-3">
+                        <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-bold shadow-lg">
+                          <Crown className="w-3 h-3 mr-1" />
+                          PREMIUM
+                        </Badge>
+                      </div>
+                    )}
                     
                     {/* Heart Button */}
                   <Button
@@ -277,7 +289,7 @@ export default function CollectionsPage() {
                       <h3 className="text-xl font-serif font-bold text-primary group-hover:text-accent transition-colors">
                         {product.name}
                       </h3>
-                      <span className="text-lg font-semibold text-accent">${product.price}</span>
+                      <span className="text-lg font-semibold text-accent">₹{product.price.toLocaleString('en-IN')}</span>
                     </div>
                     
                     <p className="text-muted-foreground text-sm mb-4 leading-relaxed font-light">
@@ -336,7 +348,7 @@ export default function CollectionsPage() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       
-                      {/* Premium Badge */}
+                      {/* Stock Status Badge */}
                       <div className="absolute top-3 left-3">
                         <Badge
                           variant={product.inStock ? "default" : "destructive"}
@@ -349,6 +361,16 @@ export default function CollectionsPage() {
                           {product.inStock ? "In Stock" : "Out of Stock"}
                         </Badge>
                       </div>
+                      
+                      {/* Premium Badge */}
+                      {product.premium && (
+                        <div className="absolute top-3 right-3">
+                          <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-bold shadow-lg">
+                            <Crown className="w-3 h-3 mr-1" />
+                            PREMIUM
+                          </Badge>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="md:w-2/3 p-6">
@@ -356,7 +378,7 @@ export default function CollectionsPage() {
                         <h3 className="text-2xl font-serif font-bold text-primary group-hover:text-accent transition-colors">
                           {product.name}
                         </h3>
-                        <span className="text-xl font-semibold text-accent">${product.price}</span>
+                        <span className="text-xl font-semibold text-accent">₹{product.price.toLocaleString('en-IN')}</span>
                       </div>
                       
                       <p className="text-muted-foreground mb-4 leading-relaxed font-light">

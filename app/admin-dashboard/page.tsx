@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useToast } from "@/contexts/ToastContext"
-import Image from "next/image"
 import { 
   Plus, 
   Package, 
@@ -29,9 +28,7 @@ import {
   TrendingUp,
   Users,
   ShoppingCart,
-  Loader2,
-  Lock,
-  User
+  Loader2
 } from "lucide-react"
 
 interface Product {
@@ -44,8 +41,10 @@ interface Product {
   images: string[]
   ingredients: string[]
   allergens: string[]
+  features?: string[]
   weight: string
   origin: string
+  premium: boolean
   createdAt: string
   updatedAt: string
 }
@@ -61,11 +60,21 @@ export default function AdminDashboard() {
   const [submitting, setSubmitting] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [checkingAuth, setCheckingAuth] = useState(true)
-  const [loginForm, setLoginForm] = useState({
-    username: "",
-    password: ""
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+    inStock: true,
+    premium: false,
+    images: [] as File[],
+    ingredients: [""],
+    allergens: [""],
+    features: [""],
+    weight: "",
+    origin: ""
   })
-  const [loginLoading, setLoginLoading] = useState(false)
   
   // Form state for adding new product
   const [formData, setFormData] = useState({
@@ -74,9 +83,11 @@ export default function AdminDashboard() {
     price: "",
     category: "",
     inStock: true,
+    premium: false,
     images: [] as File[],
     ingredients: [""],
     allergens: [""],
+    features: [""],
     weight: "",
     origin: ""
   })
@@ -117,45 +128,6 @@ export default function AdminDashboard() {
     localStorage.removeItem("adminLoggedIn")
     localStorage.removeItem("adminSession")
     router.push("/admin-login")
-  }
-
-  const handleLoginSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!loginForm.username || !loginForm.password) {
-      toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive"
-      })
-      return
-    }
-
-    setLoginLoading(true)
-
-    // Simple admin credentials check
-    if (loginForm.username === "admin" && loginForm.password === "savron2024") {
-      // Store admin session
-      localStorage.setItem("adminLoggedIn", "true")
-      localStorage.setItem("adminSession", Date.now().toString())
-      
-      toast({
-        title: "Success",
-        description: "Login successful! Redirecting to dashboard...",
-        variant: "success"
-      })
-      
-      setIsAuthenticated(true)
-      fetchProducts()
-    } else {
-      toast({
-        title: "Error",
-        description: "Invalid username or password",
-        variant: "destructive"
-      })
-    }
-
-    setLoginLoading(false)
   }
 
   const handleDeleteProduct = async (productId: string) => {
@@ -287,6 +259,160 @@ export default function AdminDashboard() {
     }))
   }
 
+  // Edit functions
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product)
+    setEditFormData({
+      name: product.name,
+      description: product.description,
+      price: product.price.toString(),
+      category: product.category,
+      inStock: product.inStock,
+      premium: product.premium,
+      images: [],
+      ingredients: product.ingredients && product.ingredients.length > 0 ? product.ingredients : [""],
+      allergens: product.allergens && product.allergens.length > 0 ? product.allergens : [""],
+      features: product.features && product.features.length > 0 ? product.features : [""],
+      weight: product.weight || "",
+      origin: product.origin || ""
+    })
+    setActiveTab("add-product")
+  }
+
+  const handleEditInputChange = (field: string, value: any) => {
+    setEditFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  const handleEditArrayFieldChange = (field: string, index: number, value: string) => {
+    setEditFormData(prev => ({
+      ...prev,
+      [field]: prev[field as keyof typeof prev].map((item: string, i: number) => 
+        i === index ? value : item
+      )
+    }))
+  }
+
+  const addEditArrayField = (field: string) => {
+    setEditFormData(prev => ({
+      ...prev,
+      [field]: [...prev[field as keyof typeof prev], ""]
+    }))
+  }
+
+  const removeEditArrayField = (field: string, index: number) => {
+    setEditFormData(prev => ({
+      ...prev,
+      [field]: prev[field as keyof typeof prev].filter((_: string, i: number) => i !== index)
+    }))
+  }
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!editingProduct) return
+
+    // Validation
+    if (!editFormData.name.trim() || !editFormData.description.trim() || !editFormData.price || !editFormData.category) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      })
+      return
+    }
+
+    try {
+      setSubmitting(true)
+
+      const productData = {
+        name: editFormData.name,
+        description: editFormData.description,
+        price: parseFloat(editFormData.price),
+        category: editFormData.category,
+        inStock: editFormData.inStock,
+        premium: editFormData.premium,
+        images: editingProduct.images, // Keep existing images for now
+        ingredients: editFormData.ingredients.filter(ing => ing.trim() !== ""),
+        allergens: editFormData.allergens.filter(all => all.trim() !== ""),
+        features: editFormData.features.filter(feat => feat.trim() !== ""),
+        weight: editFormData.weight,
+        origin: editFormData.origin,
+        updatedAt: new Date().toISOString()
+      }
+
+      const response = await fetch(`/api/products/${editingProduct._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productData)
+      })
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Product updated successfully",
+          variant: "default"
+        })
+        
+        // Reset form and fetch updated products
+        setEditingProduct(null)
+        setEditFormData({
+          name: "",
+          description: "",
+          price: "",
+          category: "",
+          inStock: true,
+          premium: false,
+          images: [],
+          ingredients: [""],
+          allergens: [""],
+          features: [""],
+          weight: "",
+          origin: ""
+        })
+        fetchProducts()
+      } else {
+        const errorData = await response.json()
+        toast({
+          title: "Error",
+          description: errorData.error || "Failed to update product",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error('Error updating product:', error)
+      toast({
+        title: "Error",
+        description: "Failed to update product. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const cancelEdit = () => {
+    setEditingProduct(null)
+    setEditFormData({
+      name: "",
+      description: "",
+      price: "",
+      category: "",
+      inStock: true,
+      premium: false,
+      images: [],
+      ingredients: [""],
+      allergens: [""],
+      features: [""],
+      weight: "",
+      origin: ""
+    })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -309,9 +435,11 @@ export default function AdminDashboard() {
         price: parseFloat(formData.price),
         category: formData.category,
         inStock: formData.inStock,
+        premium: formData.premium,
         images: uploadedImageUrls, // Use uploaded Cloudinary URLs
         ingredients: formData.ingredients.filter(ing => ing.trim() !== ""),
         allergens: formData.allergens.filter(all => all.trim() !== ""),
+        features: formData.features.filter(feat => feat.trim() !== ""),
         weight: formData.weight,
         origin: formData.origin,
       }
@@ -332,6 +460,7 @@ export default function AdminDashboard() {
           price: "",
           category: "",
           inStock: true,
+          premium: false,
           images: [],
           ingredients: [""],
           allergens: [""],
@@ -386,86 +515,9 @@ export default function AdminDashboard() {
     )
   }
 
-  // Show login form if not authenticated
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-primary via-primary/90 to-accent flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <Image
-              src="/savron-logo.png"
-              alt="Savron Chocolates"
-              width={200}
-              height={80}
-              className="mx-auto mb-4"
-            />
-            <h1 className="text-3xl font-bold text-white">Admin Portal</h1>
-            <p className="text-white/80 mt-2">Savron Chocolates Management</p>
-          </div>
-
-          {/* Login Form */}
-          <Card className="bg-white/90 backdrop-blur-sm shadow-2xl">
-            <CardHeader className="text-center">
-              <CardTitle className="flex items-center justify-center gap-2 text-2xl">
-                <Lock className="h-6 w-6 text-primary" />
-                Admin Login
-              </CardTitle>
-              <p className="text-gray-600">Enter your credentials to access the dashboard</p>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleLoginSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="username"
-                      type="text"
-                      value={loginForm.username}
-                      onChange={(e) => setLoginForm(prev => ({ ...prev, username: e.target.value }))}
-                      placeholder="Enter username"
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="password"
-                      type="password"
-                      value={loginForm.password}
-                      onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
-                      placeholder="Enter password"
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold"
-                  disabled={loginLoading}
-                >
-                  {loginLoading ? "Signing In..." : "Sign In"}
-                </Button>
-              </form>
-
-              <div className="mt-6 text-center">
-                <p className="text-sm text-gray-500">
-                  Default credentials: admin / savron2024
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
+    return null
   }
 
   return (
@@ -535,7 +587,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Avg. Price</p>
-                  <p className="text-2xl font-bold text-purple-600">${(products.reduce((sum, p) => sum + p.price, 0) / products.length).toFixed(0)}</p>
+                  <p className="text-2xl font-bold text-purple-600">₹{(products.reduce((sum, p) => sum + p.price, 0) / products.length).toFixed(0)}</p>
                 </div>
                 <ShoppingCart className="h-8 w-8 text-purple-600" />
               </div>
@@ -561,33 +613,42 @@ export default function AdminDashboard() {
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Plus className="h-5 w-5" />
-                  Add New Product
+                  {editingProduct ? (
+                    <>
+                      <Edit className="h-5 w-5" />
+                      Edit Product: {editingProduct.name}
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-5 w-5" />
+                      Add New Product
+                    </>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={editingProduct ? handleEditSubmit : handleSubmit} className="space-y-6">
                   {/* Basic Information */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name">Product Name *</Label>
                       <Input
                         id="name"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange("name", e.target.value)}
+                        value={editingProduct ? editFormData.name : formData.name}
+                        onChange={(e) => editingProduct ? handleEditInputChange("name", e.target.value) : handleInputChange("name", e.target.value)}
                         placeholder="Enter product name"
                         required
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="price">Price ($) *</Label>
+                      <Label htmlFor="price">Price (₹) *</Label>
                       <Input
                         id="price"
                         type="number"
                         step="0.01"
-                        value={formData.price}
-                        onChange={(e) => handleInputChange("price", e.target.value)}
+                        value={editingProduct ? editFormData.price : formData.price}
+                        onChange={(e) => editingProduct ? handleEditInputChange("price", e.target.value) : handleInputChange("price", e.target.value)}
                         placeholder="0.00"
                         required
                       />
@@ -598,8 +659,8 @@ export default function AdminDashboard() {
                     <Label htmlFor="description">Description *</Label>
                     <Textarea
                       id="description"
-                      value={formData.description}
-                      onChange={(e) => handleInputChange("description", e.target.value)}
+                      value={editingProduct ? editFormData.description : formData.description}
+                      onChange={(e) => editingProduct ? handleEditInputChange("description", e.target.value) : handleInputChange("description", e.target.value)}
                       placeholder="Enter product description"
                       rows={3}
                       required
@@ -609,7 +670,7 @@ export default function AdminDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="category">Category *</Label>
-                      <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
+                      <Select value={editingProduct ? editFormData.category : formData.category} onValueChange={(value) => editingProduct ? handleEditInputChange("category", value) : handleInputChange("category", value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
@@ -624,11 +685,27 @@ export default function AdminDashboard() {
                     </div>
                     
                     <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="premium"
+                          checked={editingProduct ? editFormData.premium : formData.premium}
+                          onChange={(e) => editingProduct ? handleEditInputChange("premium", e.target.checked) : handleInputChange("premium", e.target.checked)}
+                          className="rounded border-gray-300 text-primary focus:ring-primary"
+                        />
+                        <Label htmlFor="premium" className="text-sm font-medium">
+                          Premium Product
+                        </Label>
+                      </div>
+                      <p className="text-xs text-gray-500">Premium products will be featured in the Savron Premium section</p>
+                    </div>
+                    
+                    <div className="space-y-2">
                       <Label htmlFor="weight">Weight</Label>
                       <Input
                         id="weight"
-                        value={formData.weight}
-                        onChange={(e) => handleInputChange("weight", e.target.value)}
+                        value={editingProduct ? editFormData.weight : formData.weight}
+                        onChange={(e) => editingProduct ? handleEditInputChange("weight", e.target.value) : handleInputChange("weight", e.target.value)}
                         placeholder="e.g., 250g"
                       />
                     </div>
@@ -637,8 +714,8 @@ export default function AdminDashboard() {
                       <Label htmlFor="origin">Origin</Label>
                       <Input
                         id="origin"
-                        value={formData.origin}
-                        onChange={(e) => handleInputChange("origin", e.target.value)}
+                        value={editingProduct ? editFormData.origin : formData.origin}
+                        onChange={(e) => editingProduct ? handleEditInputChange("origin", e.target.value) : handleInputChange("origin", e.target.value)}
                         placeholder="e.g., Belgium"
                       />
                     </div>
@@ -720,7 +797,25 @@ export default function AdminDashboard() {
                   {/* Ingredients */}
                   <div className="space-y-2">
                     <Label>Ingredients</Label>
-                    {formData.ingredients.map((ingredient, index) => (
+                    {editingProduct ? editFormData.ingredients.map((ingredient, index) => (
+                      <div key={index} className="flex gap-2">
+                        <Input
+                          value={ingredient}
+                          onChange={(e) => handleEditArrayFieldChange("ingredients", index, e.target.value)}
+                          placeholder="Ingredient"
+                        />
+                        {editFormData.ingredients.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeEditArrayField("ingredients", index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    )) : formData.ingredients.map((ingredient, index) => (
                       <div key={index} className="flex gap-2">
                         <Input
                           value={ingredient}
@@ -743,7 +838,7 @@ export default function AdminDashboard() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => addArrayField("ingredients")}
+                      onClick={() => editingProduct ? addEditArrayField("ingredients") : addArrayField("ingredients")}
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Ingredient
@@ -753,7 +848,25 @@ export default function AdminDashboard() {
                   {/* Allergens */}
                   <div className="space-y-2">
                     <Label>Allergens</Label>
-                    {formData.allergens.map((allergen, index) => (
+                    {editingProduct ? editFormData.allergens.map((allergen, index) => (
+                      <div key={index} className="flex gap-2">
+                        <Input
+                          value={allergen}
+                          onChange={(e) => handleEditArrayFieldChange("allergens", index, e.target.value)}
+                          placeholder="Allergen"
+                        />
+                        {editFormData.allergens.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeEditArrayField("allergens", index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    )) : formData.allergens.map((allergen, index) => (
                       <div key={index} className="flex gap-2">
                         <Input
                           value={allergen}
@@ -776,10 +889,61 @@ export default function AdminDashboard() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => addArrayField("allergens")}
+                      onClick={() => editingProduct ? addEditArrayField("allergens") : addArrayField("allergens")}
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Allergen
+                    </Button>
+                  </div>
+
+                  {/* Key Features */}
+                  <div className="space-y-2">
+                    <Label>Key Features</Label>
+                    {editingProduct ? editFormData.features.map((feature, index) => (
+                      <div key={index} className="flex gap-2">
+                        <Input
+                          value={feature}
+                          onChange={(e) => handleEditArrayFieldChange("features", index, e.target.value)}
+                          placeholder="Key feature"
+                        />
+                        {editFormData.features.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeEditArrayField("features", index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    )) : formData.features.map((feature, index) => (
+                      <div key={index} className="flex gap-2">
+                        <Input
+                          value={feature}
+                          onChange={(e) => handleArrayFieldChange("features", index, e.target.value)}
+                          placeholder="Key feature"
+                        />
+                        {formData.features.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeArrayField("features", index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => editingProduct ? addEditArrayField("features") : addArrayField("features")}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Feature
                     </Button>
                   </div>
 
@@ -788,26 +952,34 @@ export default function AdminDashboard() {
                     <input
                       type="checkbox"
                       id="inStock"
-                      checked={formData.inStock}
-                      onChange={(e) => handleInputChange("inStock", e.target.checked)}
+                      checked={editingProduct ? editFormData.inStock : formData.inStock}
+                      onChange={(e) => editingProduct ? handleEditInputChange("inStock", e.target.checked) : handleInputChange("inStock", e.target.checked)}
                       className="rounded"
                     />
                     <Label htmlFor="inStock">In Stock</Label>
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={submitting}>
-                    {submitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Adding Product...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="h-4 w-4 mr-2" />
-                        Add Product
-                      </>
+                  <div className="flex gap-4">
+                    <Button type="submit" className="flex-1" disabled={submitting}>
+                      {submitting ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          {editingProduct ? "Updating Product..." : "Adding Product..."}
+                        </>
+                      ) : (
+                        <>
+                          <Save className="h-4 w-4 mr-2" />
+                          {editingProduct ? "Update Product" : "Add Product"}
+                        </>
+                      )}
+                    </Button>
+                    {editingProduct && (
+                      <Button type="button" variant="outline" onClick={cancelEdit} className="flex-1">
+                        <X className="h-4 w-4 mr-2" />
+                        Cancel Edit
+                      </Button>
                     )}
-                  </Button>
+                  </div>
                 </form>
               </CardContent>
             </Card>
@@ -863,15 +1035,20 @@ export default function AdminDashboard() {
                                 {product.inStock ? "In Stock" : "Out of Stock"}
                               </Badge>
                               <Badge variant="outline">{product.category}</Badge>
+                              {product.premium && (
+                                <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold">
+                                  PREMIUM
+                                </Badge>
+                              )}
                             </div>
                             <p className="text-gray-600 mb-2">{product.description}</p>
                             <div className="flex items-center gap-4 text-sm text-gray-500">
-                              <span>Price: ${product.price}</span>
+                              <span>Price: ₹{product.price.toLocaleString('en-IN')}</span>
                               {product.weight && <span>Weight: {product.weight}</span>}
                               {product.origin && <span>Origin: {product.origin}</span>}
                               <span>Added: {new Date(product.createdAt).toLocaleDateString()}</span>
                             </div>
-                            {product.ingredients.length > 0 && (
+                            {product.ingredients && product.ingredients.length > 0 && (
                               <div className="mt-2">
                                 <p className="text-sm font-medium">Ingredients:</p>
                                 <p className="text-sm text-gray-600">{product.ingredients.join(", ")}</p>
@@ -882,7 +1059,7 @@ export default function AdminDashboard() {
                             <Button variant="outline" size="sm">
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" onClick={() => handleEditProduct(product)}>
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700" onClick={() => handleDeleteProduct(product._id!)}>

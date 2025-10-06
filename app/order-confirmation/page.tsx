@@ -158,7 +158,7 @@ export default function OrderConfirmationPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-primary/70">Quantity: {item.quantity}</span>
                         <span className="font-bold text-primary text-lg">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                         </span>
                       </div>
                     </div>
@@ -238,19 +238,19 @@ export default function OrderConfirmationPage() {
                 <div className="space-y-3">
                   <div className="flex justify-between text-primary">
                     <span>Subtotal</span>
-                    <span>${(orderData.total - 8.99 - (orderData.total * 0.08)).toFixed(2)}</span>
+                    <span>₹{(orderData.total - 749 - (orderData.total * 0.08)).toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-primary">
                     <span>Shipping</span>
-                    <span>$8.99</span>
+                    <span>₹749</span>
                   </div>
                   <div className="flex justify-between text-primary">
                     <span>Tax</span>
-                    <span>${(orderData.total * 0.08).toFixed(2)}</span>
+                    <span>₹{(orderData.total * 0.08).toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold text-primary pt-2 border-t border-primary/20">
                     <span>Total</span>
-                    <span>${orderData.total.toFixed(2)}</span>
+                    <span>₹{orderData.total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </CardContent>
@@ -266,7 +266,7 @@ export default function OrderConfirmationPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-primary/70">{orderData.payment.method}</p>
-                <p className="font-semibold text-primary mt-2">${orderData.payment.amount.toFixed(2)}</p>
+                <p className="font-semibold text-primary mt-2">₹{orderData.payment.amount.toLocaleString('en-IN')}</p>
               </CardContent>
             </Card>
 

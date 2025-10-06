@@ -26,6 +26,7 @@ export interface Product {
   images: string[]
   video: string
   badges: string[]
+  premium: boolean
   shipping: {
     standard: string
     express: string
@@ -44,8 +45,8 @@ export const products: Product[] = [
   {
     id: 1,
     name: "Premium Dark Chocolate Truffles Collection",
-    price: 45.99,
-    originalPrice: 59.99,
+    price: 3849,
+    originalPrice: 4999,
     rating: 4.8,
     reviewCount: 127,
     inStock: true,
@@ -83,12 +84,13 @@ export const products: Product[] = [
     },
     images: [
       "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg",
-      "/placeholder.svg",
-      "/placeholder.svg",
-      "/placeholder.svg"
+      "/dark-chocolate-collection-luxury-packaging.jpg",
+      "/milk-chocolate-truffles-with-gold-accents.jpg",
+      "/white-chocolate-bonbons-with-berry-decorations.jpg"
     ],
     video: "/chocolate-making-process.mp4",
     badges: ["Premium", "Handcrafted", "Award Winner"],
+    premium: true,
     shipping: {
       standard: "5-7 business days",
       express: "2-3 business days",
@@ -121,8 +123,8 @@ export const products: Product[] = [
   {
     id: 2,
     name: "Artisan Milk Chocolate Collection",
-    price: 38.50,
-    originalPrice: 45.00,
+    price: 3199,
+    originalPrice: 3749,
     rating: 4.6,
     reviewCount: 89,
     inStock: true,
@@ -159,13 +161,14 @@ export const products: Product[] = [
       sodium: "3mg"
     },
     images: [
-      "/placeholder.svg",
-      "/placeholder.svg",
-      "/placeholder.svg",
-      "/placeholder.svg"
+      "/milk-chocolate-truffles-with-gold-accents.jpg",
+      "/dark-chocolate-collection-luxury-packaging.jpg",
+      "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg",
+      "/white-chocolate-bonbons-with-berry-decorations.jpg"
     ],
     video: "/milk-chocolate-process.mp4",
     badges: ["Creamy", "Premium", "Artisan"],
+    premium: false,
     shipping: {
       standard: "5-7 business days",
       express: "2-3 business days",
@@ -191,8 +194,8 @@ export const products: Product[] = [
   {
     id: 3,
     name: "White Chocolate Delights",
-    price: 42.00,
-    originalPrice: 48.00,
+    price: 3499,
+    originalPrice: 3999,
     rating: 4.7,
     reviewCount: 156,
     inStock: true,
@@ -229,13 +232,14 @@ export const products: Product[] = [
       sodium: "2mg"
     },
     images: [
-      "/placeholder.svg",
-      "/placeholder.svg",
-      "/placeholder.svg",
-      "/placeholder.svg"
+      "/white-chocolate-bonbons-with-berry-decorations.jpg",
+      "/milk-chocolate-truffles-with-gold-accents.jpg",
+      "/dark-chocolate-collection-luxury-packaging.jpg",
+      "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg"
     ],
     video: "/white-chocolate-process.mp4",
     badges: ["Luxury", "Hand-decorated", "Premium"],
+    premium: true,
     shipping: {
       standard: "5-7 business days",
       express: "2-3 business days",
@@ -261,8 +265,8 @@ export const products: Product[] = [
   {
     id: 4,
     name: "Gourmet Chocolate Bars Collection",
-    price: 35.99,
-    originalPrice: 42.00,
+    price: 2999,
+    originalPrice: 3499,
     rating: 4.5,
     reviewCount: 203,
     inStock: true,
@@ -299,13 +303,14 @@ export const products: Product[] = [
       sodium: "15mg"
     },
     images: [
-      "/placeholder.svg",
-      "/placeholder.svg",
-      "/placeholder.svg",
-      "/placeholder.svg"
+      "/dark-chocolate-collection-luxury-packaging.jpg",
+      "/milk-chocolate-truffles-with-gold-accents.jpg",
+      "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg",
+      "/white-chocolate-bonbons-with-berry-decorations.jpg"
     ],
     video: "/chocolate-bars-process.mp4",
     badges: ["Gourmet", "Artisanal", "Fair Trade"],
+    premium: false,
     shipping: {
       standard: "5-7 business days",
       express: "2-3 business days",

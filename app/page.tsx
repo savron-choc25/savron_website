@@ -59,13 +59,14 @@ export default function SavronHomepage() {
         origin: "Belgium",
         ingredients: product.ingredients,
         allergens: ["Milk", "Soy"],
+        features: product.features || [],
         badges: product.badges,
         rating: product.rating,
         reviews: product.reviews.length
       }))
 
-      // Combine default products with admin products
-      const allProducts = [...convertedDefaultProducts, ...adminProducts]
+      // Combine admin products with default products (newest first)
+      const allProducts = [...adminProducts, ...convertedDefaultProducts]
       setProducts(allProducts)
     } catch (error) {
       console.error('Error fetching products:', error)
@@ -82,6 +83,7 @@ export default function SavronHomepage() {
         origin: "Belgium",
         ingredients: product.ingredients,
         allergens: ["Milk", "Soy"],
+        features: product.features || [],
         badges: product.badges,
         rating: product.rating,
         reviews: product.reviews.length
@@ -244,85 +246,95 @@ export default function SavronHomepage() {
               style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}
             >
             {[
+              // Newly added non-premium products first
+              ...products.filter(product => !product.premium).map(product => ({
+                id: product._id || product.id,
+                name: product.name,
+                description: product.description,
+                image: product.images?.[0] || "/placeholder.svg",
+                price: `From ₹${product.price.toLocaleString('en-IN')}`,
+                badge: "New",
+                gradient: "from-green-600 to-emerald-600",
+                features: ["New Arrival", "Fresh"],
+                isNewProduct: true
+              })),
+              // Existing static collections - mapped to default product IDs
               {
-                id: 1,
+                id: 1, // Maps to Premium Dark Chocolate Truffles Collection
                 name: "Dark Elegance",
                 description: "Rich 70% dark chocolate with exotic spices",
                 image: "/dark-chocolate-collection-luxury-packaging.jpg",
-                price: "From $45",
+                price: "From ₹3,749",
                 badge: "Bestseller",
                 gradient: "from-slate-900 to-primary",
                 features: ["Single Origin", "Award Winning"],
+                isNewProduct: false,
               },
               {
-                id: 2,
+                id: 2, // Maps to Artisan Milk Chocolate Collection
                 name: "Milk Harmony",
                 description: "Creamy milk chocolate with caramelized nuts",
                 image: "/milk-chocolate-truffles-with-gold-accents.jpg",
-                price: "From $38",
-                badge: "New",
+                price: "From ₹3,199",
+                badge: "Classic",
                 gradient: "from-accent to-amber-600",
                 features: ["Premium Quality", "Handcrafted"],
+                isNewProduct: false,
               },
               {
-                id: 3,
+                id: 3, // Maps to White Chocolate Delights
                 name: "White Bliss",
                 description: "Premium white chocolate with berry infusions",
                 image: "/white-chocolate-bonbons-with-berry-decorations.jpg",
-                price: "From $42",
+                price: "From ₹3,499",
                 badge: "Limited",
                 gradient: "from-red-200 to-primary/50",
                 features: ["Artisan Made", "Exclusive"],
+                isNewProduct: false,
               },
               {
-                id: 1,
-                name: "Truffle Collection",
-                description: "Hand-rolled truffles with premium cocoa",
-                image: "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg",
-                price: "From $52",
-                badge: "Premium",
-                gradient: "from-purple-600 to-pink-600",
-                features: ["Hand Rolled", "Premium Cocoa"],
-              },
-              {
-                id: 4,
+                id: 4, // Maps to Gourmet Chocolate Bars Collection
                 name: "Espresso Delight",
                 description: "Dark chocolate infused with rich espresso",
                 image: "/dark-chocolate-collection-luxury-packaging.jpg",
-                price: "From $35",
+                price: "From ₹2,999",
                 badge: "Popular",
                 gradient: "from-amber-800 to-orange-600",
                 features: ["Coffee Infused", "Rich Flavor"],
+                isNewProduct: false,
               },
               {
-                id: 1,
+                id: 1, // Maps to Premium Dark Chocolate Truffles Collection
                 name: "Sea Salt Caramel",
                 description: "Smooth caramel with Himalayan sea salt",
                 image: "/milk-chocolate-truffles-with-gold-accents.jpg",
-                price: "From $40",
+                price: "From ₹3,299",
                 badge: "Classic",
                 gradient: "from-amber-400 to-yellow-500",
                 features: ["Sea Salt", "Smooth Caramel"],
+                isNewProduct: false,
               },
               {
-                id: 3,
+                id: 3, // Maps to White Chocolate Delights
                 name: "Raspberry Dream",
                 description: "White chocolate with fresh raspberry swirls",
                 image: "/white-chocolate-bonbons-with-berry-decorations.jpg",
-                price: "From $38",
+                price: "From ₹3,199",
                 badge: "Seasonal",
                 gradient: "from-pink-400 to-red-400",
                 features: ["Fresh Berries", "Seasonal"],
+                isNewProduct: false,
               },
               {
-                id: 2,
+                id: 2, // Maps to Artisan Milk Chocolate Collection
                 name: "Hazelnut Crunch",
                 description: "Milk chocolate with roasted hazelnuts",
                 image: "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg",
-                price: "From $36",
+                price: "From ₹2,999",
                 badge: "Nutty",
                 gradient: "from-amber-600 to-brown-600",
                 features: ["Roasted Nuts", "Crunchy"],
+                isNewProduct: false,
               },
             ].map((collection, index) => (
               <Card
@@ -336,13 +348,15 @@ export default function SavronHomepage() {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   
-                  {/* Premium Badge */}
+                  {/* Product Badge */}
                   <div className="absolute top-2 left-2">
                     <Badge
                       variant={collection.badge === "Bestseller" ? "default" : "secondary"}
                       className={
                         collection.badge === "Bestseller"
                           ? "bg-gradient-to-r from-primary to-red-800 text-white shadow-xl font-semibold px-3 py-1"
+                          : collection.badge === "New" && collection.isNewProduct
+                          ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-xl font-semibold px-3 py-1"
                           : collection.badge === "New"
                           ? "bg-gradient-to-r from-accent to-amber-600 text-white shadow-xl font-semibold px-3 py-1"
                           : "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl font-semibold px-3 py-1"
@@ -383,7 +397,7 @@ export default function SavronHomepage() {
                     className="w-full group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-accent group-hover:text-white group-hover:border-transparent transition-all duration-500 transform group-hover:scale-105 shadow-md hover:shadow-lg bg-transparent border-accent/40 text-accent hover:text-white font-semibold py-2 text-sm"
                   >
                     <a href={`/view-details?id=${collection.id}`} className="text-inherit flex items-center justify-center">
-                      View Collection
+                      {collection.isNewProduct ? "View Product" : "View Collection"}
                       <ChevronRight className="w-3 h-3 ml-1" />
                     </a>
                   </Button>
@@ -399,13 +413,13 @@ export default function SavronHomepage() {
       <section className="pb-0 relative overflow-hidden">
         <div className="w-full">
           <div className="grid lg:grid-cols-2 gap-0 min-h-[600px]">
-            {/* Left Panel - Dark Background with Text */}
+            {/* Left Panel - Dark Background with Premium Products */}
             <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 p-12 lg:p-16 flex flex-col justify-center relative">
               {/* Decorative Elements */}
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900/50 to-purple-800/30"></div>
               <div className="absolute top-8 right-8 w-32 h-32 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full blur-2xl"></div>
               
-              <div className="relative z-10 space-y-8">
+              <div className="relative z-10 space-y-6">
                 {/* New Look Banner */}
                 <div className="inline-block bg-gradient-to-r from-yellow-400 to-orange-400 px-6 py-2 rounded-lg shadow-lg">
                   <span className="text-black font-bold text-sm tracking-wide">NEW LOOK</span>
@@ -413,40 +427,36 @@ export default function SavronHomepage() {
                 
                 {/* Main Title */}
                 <h2 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
-                  SAVRON
+                  {products.filter(product => product.premium)[0]?.name || "SAVRON"}
                   <span className="block text-yellow-300">PREMIUM</span>
-              </h2>
-                
-                {/* Description */}
-                <p className="text-white/90 text-lg leading-relaxed max-w-md">
-                  The original smooth dark chocolate from Savron. Now with a new look and 2x delicious new flavours, 
-                  chopped hazelnut and salted caramel.
-                </p>
+                </h2>
                 
                 {/* CTA Button */}
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-                >
-                  DISCOVER PREMIUM
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </Button>
+                <Link href={`/view-details?id=${products.filter(product => product.premium)[0]?._id || products.filter(product => product.premium)[0]?.id || 'default-1'}`}>
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                  >
+                    DISCOVER PREMIUM
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
               </div>
             </div>
             
-            {/* Right Panel - Product Image */}
+            {/* Right Panel - Single Premium Product Image */}
             <div className="bg-gradient-to-br from-red-600 via-red-500 to-red-700 p-12 lg:p-16 flex items-center justify-center relative overflow-hidden">
               {/* Decorative Elements */}
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-red-600/80 to-red-700/60"></div>
               <div className="absolute bottom-8 left-8 w-40 h-40 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full blur-3xl"></div>
               
-              {/* Product Image Container */}
+              {/* Single Premium Product Image */}
               <div className="relative z-10 transform rotate-12 hover:rotate-6 transition-transform duration-700">
                 <div className="relative">
-                  {/* Chocolate Bar Image */}
+                  {/* Premium Product Image */}
                   <img
-                    src="/dark-chocolate-collection-luxury-packaging.jpg"
-                    alt="Savron Premium Dark Chocolate"
+                    src={products.filter(product => product.premium)[0]?.images?.[0] || "/dark-chocolate-collection-luxury-packaging.jpg"}
+                    alt="Savron Premium Chocolate"
                     className="w-80 h-96 object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
                   />
                   
@@ -477,19 +487,19 @@ export default function SavronHomepage() {
       <section className="pb-0 relative overflow-hidden">
         <div className="w-full">
           <div className="grid lg:grid-cols-2 gap-0 min-h-[600px]">
-            {/* Left Panel - Product Image */}
+            {/* Left Panel - Single Premium Product Image */}
             <div className="bg-gradient-to-br from-red-600 via-red-500 to-red-700 p-12 lg:p-16 flex items-center justify-center relative overflow-hidden">
               {/* Decorative Elements */}
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-red-600/80 to-red-700/60"></div>
               <div className="absolute bottom-8 left-8 w-40 h-40 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full blur-3xl"></div>
               
-              {/* Product Image Container */}
+              {/* Single Premium Product Image */}
               <div className="relative z-10 transform rotate-12 hover:rotate-6 transition-transform duration-700">
                 <div className="relative">
-                  {/* Chocolate Bar Image */}
+                  {/* Premium Product Image */}
                   <img
-                    src="/dark-chocolate-collection-luxury-packaging.jpg"
-                    alt="Savron Premium Dark Chocolate"
+                    src={products.filter(product => product.premium)[1]?.images?.[0] || "/dark-chocolate-collection-luxury-packaging.jpg"}
+                    alt="Savron Premium Chocolate"
                     className="w-80 h-96 object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
                   />
                   
@@ -513,7 +523,7 @@ export default function SavronHomepage() {
               </div>
             </div>
             
-            {/* Right Panel - Dark Background with Text */}
+            {/* Right Panel - Dark Background with Premium Product Name */}
             <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 p-12 lg:p-16 flex flex-col justify-center relative">
               {/* Decorative Elements */}
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900/50 to-purple-800/30"></div>
@@ -527,24 +537,20 @@ export default function SavronHomepage() {
                 
                 {/* Main Title */}
                 <h2 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
-                  SAVRON
+                  {products.filter(product => product.premium)[1]?.name || "SAVRON"}
                   <span className="block text-yellow-300">PREMIUM</span>
                 </h2>
                 
-                {/* Description */}
-                <p className="text-white/90 text-lg leading-relaxed max-w-md">
-                  The original smooth dark chocolate from Savron. Now with a new look and 2x delicious new flavours, 
-                  chopped hazelnut and salted caramel.
-                </p>
-                
                 {/* CTA Button */}
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-                >
-                  DISCOVER PREMIUM
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </Button>
+                <Link href={`/view-details?id=${products.filter(product => product.premium)[1]?._id || products.filter(product => product.premium)[1]?.id || 'default-2'}`}>
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                  >
+                    DISCOVER PREMIUM
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -555,7 +561,7 @@ export default function SavronHomepage() {
       <section className="pb-0 relative overflow-hidden">
         <div className="w-full">
           <div className="grid lg:grid-cols-2 gap-0 min-h-[600px]">
-            {/* Left Panel - Dark Background with Text */}
+            {/* Left Panel - Dark Background with Premium Product Name */}
             <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 p-12 lg:p-16 flex flex-col justify-center relative">
               {/* Decorative Elements */}
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900/50 to-purple-800/30"></div>
@@ -569,40 +575,36 @@ export default function SavronHomepage() {
                 
                 {/* Main Title */}
                 <h2 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
-                  SAVRON
+                  {products.filter(product => product.premium)[2]?.name || "SAVRON"}
                   <span className="block text-yellow-300">PREMIUM</span>
                 </h2>
                 
-                {/* Description */}
-                <p className="text-white/90 text-lg leading-relaxed max-w-md">
-                  The original smooth dark chocolate from Savron. Now with a new look and 2x delicious new flavours, 
-                  chopped hazelnut and salted caramel.
-                </p>
-                
                 {/* CTA Button */}
-              <Button
-                size="lg"
-                  className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-                >
-                  DISCOVER PREMIUM
-                  <ChevronRight className="w-5 h-5 ml-2" />
-              </Button>
+                <Link href={`/view-details?id=${products.filter(product => product.premium)[2]?._id || products.filter(product => product.premium)[2]?.id || 'default-3'}`}>
+                  <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                  >
+                    DISCOVER PREMIUM
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
               </div>
             </div>
             
-            {/* Right Panel - Product Image */}
+            {/* Right Panel - Single Premium Product Image */}
             <div className="bg-gradient-to-br from-red-600 via-red-500 to-red-700 p-12 lg:p-16 flex items-center justify-center relative overflow-hidden">
               {/* Decorative Elements */}
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-red-600/80 to-red-700/60"></div>
               <div className="absolute bottom-8 left-8 w-40 h-40 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full blur-3xl"></div>
               
-              {/* Product Image Container */}
+              {/* Single Premium Product Image */}
               <div className="relative z-10 transform rotate-12 hover:rotate-6 transition-transform duration-700">
-            <div className="relative">
-                  {/* Chocolate Bar Image */}
+                <div className="relative">
+                  {/* Premium Product Image */}
                   <img
-                    src="/dark-chocolate-collection-luxury-packaging.jpg"
-                    alt="Savron Premium Dark Chocolate"
+                    src={products.filter(product => product.premium)[2]?.images?.[0] || "/dark-chocolate-collection-luxury-packaging.jpg"}
+                    alt="Savron Premium Chocolate"
                     className="w-80 h-96 object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
                   />
                   

@@ -81,9 +81,9 @@ export default function CheckoutPage() {
   }
 
   const shippingMethods = [
-    { id: "standard", name: "Standard Shipping", price: 8.99, days: "5-7 business days" },
-    { id: "express", name: "Express Shipping", price: 15.99, days: "2-3 business days" },
-    { id: "overnight", name: "Overnight Shipping", price: 25.99, days: "Next business day" }
+    { id: "standard", name: "Standard Shipping", price: 749, days: "5-7 business days" },
+    { id: "express", name: "Express Shipping", price: 1349, days: "2-3 business days" },
+    { id: "overnight", name: "Overnight Shipping", price: 2199, days: "Next business day" }
   ]
 
   return (
@@ -261,7 +261,7 @@ export default function CheckoutPage() {
                           <p className="text-sm text-primary/70">{method.days}</p>
                         </div>
                       </div>
-                      <span className="font-bold text-primary">${method.price.toFixed(2)}</span>
+                      <span className="font-bold text-primary">₹{method.price.toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 ))}
@@ -308,7 +308,7 @@ export default function CheckoutPage() {
                         onCheckedChange={(checked) => handleInputChange("giftWrap", checked as boolean)}
                       />
                       <Label htmlFor="giftWrap" className="text-primary font-medium">
-                        Add premium gift wrapping (+$5.99)
+                        Add premium gift wrapping (+₹499)
                       </Label>
                     </div>
                   </div>
@@ -360,7 +360,7 @@ export default function CheckoutPage() {
                       <div className="flex-1">
                         <h4 className="font-semibold text-primary text-sm">{item.name}</h4>
                         <p className="text-primary/70 text-sm">Qty: {item.quantity}</p>
-                        <p className="font-bold text-primary">${(item.price * item.quantity).toFixed(2)}</p>
+                        <p className="font-bold text-primary">₹{(item.price * item.quantity).toLocaleString('en-IN')}</p>
                       </div>
                     </div>
                   ))}
@@ -370,25 +370,25 @@ export default function CheckoutPage() {
                 <div className="space-y-3 pt-4 border-t border-primary/20">
                   <div className="flex justify-between text-primary">
                     <span>Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>₹{subtotal.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-primary">
                     <span>Shipping</span>
-                    <span>${shipping.toFixed(2)}</span>
+                    <span>₹{shipping.toLocaleString('en-IN')}</span>
                   </div>
                   {giftWrap > 0 && (
                     <div className="flex justify-between text-primary">
                       <span>Gift Wrapping</span>
-                      <span>${giftWrap.toFixed(2)}</span>
+                      <span>₹{giftWrap.toLocaleString('en-IN')}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-primary">
                     <span>Tax</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>₹{tax.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold text-primary pt-2 border-t border-primary/20">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>₹{total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 

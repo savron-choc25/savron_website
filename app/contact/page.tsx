@@ -13,22 +13,22 @@ export default function ContactPage() {
     {
       icon: <MapPin className="h-6 w-6" />,
       title: "Visit Our Boutique",
-      details: ["123 Chocolate Avenue", "Paris, France 75001"],
+      details: ["Unit No.13, Shrikant Industrial Estate Rd No.21", "Sathe Nagar, Thane - Mumbai-400604"],
     },
     {
       icon: <Phone className="h-6 w-6" />,
       title: "Call Us",
-      details: ["+33 1 42 86 87 88", "Mon-Sat: 9AM-7PM"],
+      details: ["+91 8879555533", ],
     },
     {
       icon: <Mail className="h-6 w-6" />,
       title: "Email Us",
-      details: ["hello@savron.com", "orders@savron.com"],
+      details: ["savron1785@gmail.com", ],
     },
     {
       icon: <Clock className="h-6 w-6" />,
       title: "Business Hours",
-      details: ["Monday - Saturday: 9AM - 7PM", "Sunday: 10AM - 6PM"],
+      details: ["Monday - Saturday: 9AM - 9PM", ],
     },
   ]
 

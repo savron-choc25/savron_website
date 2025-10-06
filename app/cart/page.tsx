@@ -145,10 +145,10 @@ export default function CartPage() {
                           </div>
                           <div className="text-right">
                             <p className="text-2xl font-bold text-primary">
-                              ${(item.price * item.quantity).toFixed(2)}
+                              ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                             </p>
                             <p className="text-sm text-primary/70">
-                              ${item.price.toFixed(2)} each
+                              ₹{item.price.toLocaleString('en-IN')} each
                             </p>
                           </div>
                         </div>
@@ -188,19 +188,19 @@ export default function CartPage() {
                 <div className="space-y-3 pt-4 border-t border-primary/20">
                   <div className="flex justify-between text-primary">
                     <span>Subtotal ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>₹{subtotal.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-primary">
                     <span>Shipping</span>
-                    <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                    <span>{shipping === 0 ? 'Free' : `₹${shipping.toLocaleString('en-IN')}`}</span>
                   </div>
                   <div className="flex justify-between text-primary">
                     <span>Tax</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>₹{tax.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold text-primary pt-2 border-t border-primary/20">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>₹{total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 
@@ -208,7 +208,7 @@ export default function CartPage() {
                 <div className="space-y-3 pt-4">
                   <div className="flex items-center gap-3 text-sm text-primary/70">
                     <Truck className="w-4 h-4" />
-                    <span>Free shipping on orders over $50</span>
+                    <span>Free shipping on orders over ₹4,199</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-primary/70">
                     <Shield className="w-4 h-4" />

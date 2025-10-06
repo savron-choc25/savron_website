@@ -36,7 +36,7 @@ export default function ShopPage() {
       id: 1,
       name: "Dark Elegance Truffle Box",
       collection: "Dark Elegance",
-      price: 45,
+      price: 3749,
       originalPrice: null,
       image: "/dark-chocolate-collection-luxury-packaging.jpg",
       rating: 4.9,
@@ -48,8 +48,8 @@ export default function ShopPage() {
       id: 2,
       name: "Milk Harmony Selection",
       collection: "Milk Harmony",
-      price: 38,
-      originalPrice: 42,
+      price: 3199,
+      originalPrice: 3499,
       image: "/milk-chocolate-truffles-with-gold-accents.jpg",
       rating: 4.8,
       reviews: 89,
@@ -60,7 +60,7 @@ export default function ShopPage() {
       id: 3,
       name: "White Luxury Bonbons",
       collection: "White Luxury",
-      price: 42,
+      price: 3499,
       originalPrice: null,
       image: "/white-chocolate-bonbons-with-berry-decorations.jpg",
       rating: 4.9,
@@ -72,7 +72,7 @@ export default function ShopPage() {
       id: 4,
       name: "Artisan Truffle Collection",
       collection: "Artisan Truffles",
-      price: 55,
+      price: 4599,
       originalPrice: null,
       image: "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg",
       rating: 5.0,
@@ -84,8 +84,8 @@ export default function ShopPage() {
       id: 5,
       name: "Dark Chocolate Bar Set",
       collection: "Dark Elegance",
-      price: 28,
-      originalPrice: 32,
+      price: 2349,
+      originalPrice: 2699,
       image: "/dark-chocolate-collection-luxury-packaging.jpg",
       rating: 4.7,
       reviews: 74,
@@ -96,7 +96,7 @@ export default function ShopPage() {
       id: 6,
       name: "Seasonal Berry Collection",
       collection: "White Luxury",
-      price: 48,
+      price: 3999,
       originalPrice: null,
       image: "/white-chocolate-bonbons-with-berry-decorations.jpg",
       rating: 4.8,
@@ -198,6 +198,12 @@ export default function ShopPage() {
                       </Badge>
                     )}
                     {product.originalPrice && <Badge className="bg-red-500 text-white font-semibold">Sale</Badge>}
+                    {product.premium && (
+                      <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-bold">
+                        <Crown className="w-3 h-3 mr-1" />
+                        PREMIUM
+                      </Badge>
+                    )}
                   </div>
 
                   {/* Wishlist Button */}
@@ -252,9 +258,9 @@ export default function ShopPage() {
                   {/* Price & Add to Cart */}
                   <div className="flex justify-between items-center">
                     <div className="flex items-center space-x-2">
-                      <span className="text-2xl font-bold text-maroon-800">${product.price}</span>
+                      <span className="text-2xl font-bold text-maroon-800">₹{product.price.toLocaleString('en-IN')}</span>
                       {product.originalPrice && (
-                        <span className="text-lg text-gray-500 line-through">${product.originalPrice}</span>
+                        <span className="text-lg text-gray-500 line-through">₹{product.originalPrice.toLocaleString('en-IN')}</span>
                       )}
                     </div>
                     <Button 
@@ -290,7 +296,7 @@ export default function ShopPage() {
             {[
               {
                 title: "Free Shipping",
-                description: "On orders over $75 worldwide",
+                description: "On orders over ₹6,249 worldwide",
                 icon: "🚚",
               },
               {

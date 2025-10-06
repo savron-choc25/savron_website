@@ -387,7 +387,7 @@ export default function PaymentPage() {
                 ) : (
                   <div className="flex items-center">
                     <Lock className="w-4 h-4 mr-2" />
-                    Place Order - ${total.toFixed(2)}
+                    Place Order - ₹{total.toLocaleString('en-IN')}
                   </div>
                 )}
               </Button>
@@ -417,7 +417,7 @@ export default function PaymentPage() {
                       <div className="flex-1">
                         <h4 className="font-semibold text-primary text-sm">{item.name}</h4>
                         <p className="text-primary/70 text-sm">Qty: {item.quantity}</p>
-                        <p className="font-bold text-primary">${(item.price * item.quantity).toFixed(2)}</p>
+                        <p className="font-bold text-primary">₹{(item.price * item.quantity).toLocaleString('en-IN')}</p>
                       </div>
                     </div>
                   ))}
@@ -427,19 +427,19 @@ export default function PaymentPage() {
                 <div className="space-y-3 pt-4 border-t border-primary/20">
                   <div className="flex justify-between text-primary">
                     <span>Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>₹{subtotal.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-primary">
                     <span>Shipping</span>
-                    <span>${shipping.toFixed(2)}</span>
+                    <span>₹{shipping.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-primary">
                     <span>Tax</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>₹{tax.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold text-primary pt-2 border-t border-primary/20">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>₹{total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 
