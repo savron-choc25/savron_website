@@ -73,7 +73,7 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Image
-            src="/savron-logo.png"
+            src="/savron_logo22.png"
             alt="Savron Chocolates"
             width={200}
             height={80}

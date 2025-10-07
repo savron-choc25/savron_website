@@ -12,11 +12,11 @@ export default function Footer() {
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid md:grid-cols-4 gap-12">
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div className="flex items-center">
-              <div className="relative w-100 h-60 -mt-20">
+              <div className="relative w-100 h-80 -mt-28 -ml-6">
                 <Image
-                  src="/savron-logo.png"
+                  src="/savron_logo22.png"
                   alt="Savron Chocolate Logo"
                   fill
                   className="object-contain"
@@ -24,7 +24,7 @@ export default function Footer() {
                 />
               </div>
             </div>
-            <p className="text-base opacity-90 text-pretty leading-relaxed font-light">
+            <p className="text-base opacity-90 text-pretty leading-relaxed font-light -mt-18">
               Crafting exceptional chocolates since 1952. Experience luxury in every bite of our artisan creations.
             </p>
             <div className="flex space-x-6">
@@ -121,7 +121,10 @@ export default function Footer() {
 
         <div className="border-t border-background/20 mt-16 pt-8 text-center">
           <p className="text-sm opacity-70 font-light">
-            © 2024 Savron Chocolates. All rights reserved. | Privacy Policy | Terms of Service
+            © 2025 Savron Chocolates. All Rights Reserved.
+          </p>
+          <p className="text-xs opacity-60 font-light mt-2">
+            Privacy Policy | Terms of Service
           </p>
         </div>
       </div>

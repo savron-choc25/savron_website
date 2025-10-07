@@ -629,7 +629,7 @@ export default function AdminDashboard() {
               <CardContent>
                 <form onSubmit={editingProduct ? handleEditSubmit : handleSubmit} className="space-y-6">
                   {/* Basic Information */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name">Product Name *</Label>
                       <Input
@@ -667,7 +667,7 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="category">Category *</Label>
                       <Select value={editingProduct ? editFormData.category : formData.category} onValueChange={(value) => editingProduct ? handleEditInputChange("category", value) : handleInputChange("category", value)}>
@@ -1027,22 +1027,22 @@ export default function AdminDashboard() {
                   <div className="space-y-4">
                     {filteredProducts.map((product) => (
                       <div key={product._id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-start justify-between">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                           <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h3 className="text-lg font-semibold">{product.name}</h3>
-                              <Badge variant={product.inStock ? "default" : "destructive"}>
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                              <h3 className="text-base sm:text-lg font-semibold">{product.name}</h3>
+                              <Badge variant={product.inStock ? "default" : "destructive"} className="text-xs">
                                 {product.inStock ? "In Stock" : "Out of Stock"}
                               </Badge>
-                              <Badge variant="outline">{product.category}</Badge>
+                              <Badge variant="outline" className="text-xs">{product.category}</Badge>
                               {product.premium && (
-                                <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold">
+                                <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold text-xs">
                                   PREMIUM
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-gray-600 mb-2">{product.description}</p>
-                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <p className="text-gray-600 mb-2 text-sm sm:text-base">{product.description}</p>
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
                               <span>Price: ₹{product.price.toLocaleString('en-IN')}</span>
                               {product.weight && <span>Weight: {product.weight}</span>}
                               {product.origin && <span>Origin: {product.origin}</span>}
@@ -1050,19 +1050,19 @@ export default function AdminDashboard() {
                             </div>
                             {product.ingredients && product.ingredients.length > 0 && (
                               <div className="mt-2">
-                                <p className="text-sm font-medium">Ingredients:</p>
-                                <p className="text-sm text-gray-600">{product.ingredients.join(", ")}</p>
+                                <p className="text-xs sm:text-sm font-medium">Ingredients:</p>
+                                <p className="text-xs sm:text-sm text-gray-600">{product.ingredients.join(", ")}</p>
                               </div>
                             )}
                           </div>
-                          <div className="flex gap-2 ml-4">
-                            <Button variant="outline" size="sm">
+                          <div className="flex gap-2 sm:ml-4">
+                            <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleEditProduct(product)}>
+                            <Button variant="outline" size="sm" onClick={() => handleEditProduct(product)} className="flex-1 sm:flex-none">
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700" onClick={() => handleDeleteProduct(product._id!)}>
+                            <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 flex-1 sm:flex-none" onClick={() => handleDeleteProduct(product._id!)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>

@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
-import { Star, Heart, ShoppingCart, Filter, Grid, List } from "lucide-react"
+import { Star, Heart, ShoppingCart, Filter, Grid, List, Crown } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useCart, cartUtils } from "@/contexts/CartContext"
@@ -42,6 +42,7 @@ export default function ShopPage() {
       rating: 4.9,
       reviews: 127,
       bestseller: true,
+      premium: false,
       description: "12 handcrafted dark chocolate truffles with 70-90% cocoa content",
     },
     {
@@ -54,6 +55,7 @@ export default function ShopPage() {
       rating: 4.8,
       reviews: 89,
       bestseller: false,
+      premium: false,
       description: "8 premium milk chocolate pieces with smooth, creamy textures",
     },
     {
@@ -102,6 +104,7 @@ export default function ShopPage() {
       rating: 4.8,
       reviews: 92,
       bestseller: false,
+      premium: false,
       description: "Limited edition white chocolates with seasonal berry infusions",
     },
   ]
@@ -114,10 +117,10 @@ export default function ShopPage() {
       <section className="relative py-24 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 bg-gradient-to-r from-maroon-900/10 to-amber-900/10"></div>
         <div className="relative max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">
             Shop Premium Chocolates
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
             Discover our complete collection of handcrafted artisan chocolates, each piece a testament to our commitment
             to excellence and flavor.
           </p>
@@ -127,14 +130,14 @@ export default function ShopPage() {
       {/* Filters & Sort */}
       <section className="py-8 px-4 sm:px-6 lg:px-8 border-b border-amber-100">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="flex items-center space-x-4">
-              <Button variant="outline" className="border-maroon-200 text-maroon-700 hover:bg-maroon-50 bg-transparent">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+              <Button variant="outline" className="border-maroon-200 text-maroon-700 hover:bg-maroon-50 bg-transparent w-full sm:w-auto">
                 <Filter className="h-4 w-4 mr-2" />
                 Filters
               </Button>
               <Select>
-                <SelectTrigger className="w-48 border-maroon-200">
+                <SelectTrigger className="w-full sm:w-48 border-maroon-200">
                   <SelectValue placeholder="Collection" />
                 </SelectTrigger>
                 <SelectContent>
@@ -146,9 +149,9 @@ export default function ShopPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
               <Select>
-                <SelectTrigger className="w-48 border-maroon-200">
+                <SelectTrigger className="w-full sm:w-48 border-maroon-200">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -159,11 +162,11 @@ export default function ShopPage() {
                   <SelectItem value="newest">Newest</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex border border-maroon-200 rounded-md">
-                <Button variant="ghost" size="sm" className="text-maroon-700 hover:bg-maroon-50">
+              <div className="flex border border-maroon-200 rounded-md w-full sm:w-auto">
+                <Button variant="ghost" size="sm" className="text-maroon-700 hover:bg-maroon-50 flex-1 sm:flex-none">
                   <Grid className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="sm" className="text-maroon-700 hover:bg-maroon-50">
+                <Button variant="ghost" size="sm" className="text-maroon-700 hover:bg-maroon-50 flex-1 sm:flex-none">
                   <List className="h-4 w-4" />
                 </Button>
               </div>
@@ -175,7 +178,7 @@ export default function ShopPage() {
       {/* Products Grid */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {products.map((product) => (
               <Card
                 key={product.id}
@@ -225,14 +228,14 @@ export default function ShopPage() {
                   </Button>
                 </div>
 
-                <CardContent className="p-6">
+                <CardContent className="p-4 sm:p-6">
                   <div className="mb-2">
                     <Badge variant="outline" className="text-xs text-maroon-600 border-maroon-200">
                       {product.collection}
                     </Badge>
                   </div>
 
-                  <h3 className="text-xl font-bold text-maroon-800 mb-2 group-hover:text-maroon-600 transition-colors">
+                  <h3 className="text-lg sm:text-xl font-bold text-maroon-800 mb-2 group-hover:text-maroon-600 transition-colors">
                     {product.name}
                   </h3>
 
@@ -244,28 +247,28 @@ export default function ShopPage() {
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`h-4 w-4 ${
+                          className={`h-3 w-3 sm:h-4 sm:w-4 ${
                             i < Math.floor(product.rating) ? "text-amber-400 fill-current" : "text-gray-300"
                           }`}
                         />
                       ))}
                     </div>
-                    <span className="text-sm text-gray-600 ml-2">
+                    <span className="text-xs sm:text-sm text-gray-600 ml-2">
                       {product.rating} ({product.reviews})
                     </span>
                   </div>
 
                   {/* Price & Add to Cart */}
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div className="flex items-center space-x-2">
-                      <span className="text-2xl font-bold text-maroon-800">₹{product.price.toLocaleString('en-IN')}</span>
+                      <span className="text-xl sm:text-2xl font-bold text-maroon-800">₹{product.price.toLocaleString('en-IN')}</span>
                       {product.originalPrice && (
-                        <span className="text-lg text-gray-500 line-through">₹{product.originalPrice.toLocaleString('en-IN')}</span>
+                        <span className="text-sm sm:text-lg text-gray-500 line-through">₹{product.originalPrice.toLocaleString('en-IN')}</span>
                       )}
                     </div>
                     <Button 
                       onClick={() => handleAddToCart(product)}
-                      className="bg-gradient-to-r from-maroon-700 to-maroon-600 hover:from-maroon-800 hover:to-maroon-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                      className="bg-gradient-to-r from-maroon-700 to-maroon-600 hover:from-maroon-800 hover:to-maroon-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto text-sm sm:text-base"
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />
                       Add to Cart
@@ -292,7 +295,7 @@ export default function ShopPage() {
       {/* Features Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-maroon-50 to-amber-50">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {[
               {
                 title: "Free Shipping",

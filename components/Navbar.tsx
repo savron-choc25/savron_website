@@ -16,9 +16,9 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
           <Link href="/" className="flex items-center group">
-            <div className="relative w-80 h-16  transition-all duration-300 -ml-16 -mt-2 -mb-2">
+            <div className="relative w-120 h-34  transition-all duration-300 -ml-28 -mt-2 -mb-1">
               <Image
-                src="/savron-logo.png"
+                src="/savron_logo22.png"
                 alt="Savron Chocolate Logo"
                 fill
                 className="object-contain"

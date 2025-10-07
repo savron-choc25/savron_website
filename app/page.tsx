@@ -137,7 +137,7 @@ export default function SavronHomepage() {
       <Navbar />
       
       {/* Hero Section - Complete Banner from Top */}
-      <section className="relative h-screen overflow-hidden">
+      <section className="relative h-screen overflow-hidden pt-20">
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
@@ -157,37 +157,37 @@ export default function SavronHomepage() {
             <div className="space-y-8">
                 
                 <div className="space-y-6">
-                  <h1 className="text-6xl lg:text-8xl font-serif font-bold text-balance leading-[0.9]">
-                    <span className="block text-white">Artisan</span>
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-bold text-balance leading-[0.9]">
+                    <span className="block text-white">Savron</span>
                     <span className="bg-gradient-to-r from-accent via-amber-300 to-orange-400 bg-clip-text text-transparent block">
                       Chocolates
                     </span>
-                    <span className="block text-white text-5xl lg:text-6xl font-light">
+                    <span className="block text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light">
                     Crafted with Passion
                   </span>
                 </h1>
-                  <p className="text-2xl text-white/90 text-pretty max-w-2xl leading-relaxed font-light">
+                  <p className="text-lg sm:text-xl md:text-2xl text-white/90 text-pretty max-w-2xl leading-relaxed font-light">
                   Experience the finest handcrafted chocolates made with premium ingredients and traditional techniques
                     passed down through generations of master chocolatiers.
                 </p>
               </div>
                 
-                <div className="flex flex-col sm:flex-row gap-6 pt-4">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-4">
                 <Button
                   size="lg"
-                    className="bg-gradient-to-r from-accent via-amber-500 to-orange-500 hover:from-accent/90 hover:via-amber-400 hover:to-orange-400 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-500 text-xl px-10 py-8 font-bold text-primary"
+                    className="bg-gradient-to-r from-accent via-amber-500 to-orange-500 hover:from-accent/90 hover:via-amber-400 hover:to-orange-400 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-500 text-lg sm:text-xl px-6 sm:px-10 py-6 sm:py-8 font-bold text-primary w-full sm:w-auto"
                 >
-                    <a href="/collections" className="flex items-center text-primary">
+                    <a href="/collections" className="flex items-center justify-center text-primary">
                     Explore Collections
-                      <ChevronRight className="w-6 h-6 ml-3" />
+                      <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 ml-2 sm:ml-3" />
                   </a>
                 </Button>
                 <Button
                   variant="outline"
                   size="lg"
-                    className="border-2 border-white/70 hover:bg-white/10 transform hover:scale-105 transition-all duration-500 bg-transparent text-white hover:text-white text-xl px-10 py-8 font-bold shadow-xl hover:shadow-2xl backdrop-blur-sm"
+                    className="border-2 border-white/70 hover:bg-white/10 transform hover:scale-105 transition-all duration-500 bg-transparent text-white hover:text-white text-lg sm:text-xl px-6 sm:px-10 py-6 sm:py-8 font-bold shadow-xl hover:shadow-2xl backdrop-blur-sm w-full sm:w-auto"
                 >
-                    <Gift className="w-6 h-6 mr-3" />
+                    <Gift className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
                   Gift Sets
                 </Button>
                 </div>
@@ -215,10 +215,10 @@ export default function SavronHomepage() {
               <Sparkles className="w-4 h-4 mr-2" />
               Signature Collections
             </Badge>
-            <h2 className="text-4xl lg:text-5xl font-serif font-bold mb-6 bg-gradient-to-r from-white via-accent to-amber-300 bg-clip-text text-transparent">
-              Artisan Chocolate Collections
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white via-accent to-amber-300 bg-clip-text text-transparent">
+              Savron Chocolate Collections
             </h2>
-            <p className="text-white/90 text-xl max-w-3xl mx-auto text-pretty leading-relaxed font-light">
+            <p className="text-white/90 text-lg sm:text-xl max-w-3xl mx-auto text-pretty leading-relaxed font-light px-4">
               Each collection tells a story of craftsmanship, featuring unique flavor profiles and premium ingredients
               sourced from the finest cocoa regions around the world.
             </p>
@@ -228,21 +228,21 @@ export default function SavronHomepage() {
             {/* Navigation Arrows */}
             <button 
               onClick={scrollLeft}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-3 transition-all duration-300 transform hover:scale-110"
+              className="absolute left-0 sm:-left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-2 sm:p-3 transition-all duration-300 transform hover:scale-110 hidden sm:block"
             >
-              <ChevronLeft className="w-6 h-6 text-primary" />
+              <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6 text-primary" />
             </button>
             <button 
               onClick={scrollRight}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-3 transition-all duration-300 transform hover:scale-110"
+              className="absolute right-0 sm:-right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full p-2 sm:p-3 transition-all duration-300 transform hover:scale-110 hidden sm:block"
             >
-              <ChevronRight className="w-6 h-6 text-primary" />
+              <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6 text-primary" />
             </button>
             
             {/* Horizontal Scrollable Container */}
             <div 
               ref={scrollContainerRef}
-              className="flex gap-6 overflow-x-auto scrollbar-hide pb-4" 
+              className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-4 px-2 sm:px-0" 
               style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}
             >
             {[
@@ -339,7 +339,7 @@ export default function SavronHomepage() {
             ].map((collection, index) => (
               <Card
                 key={index}
-                className="group cursor-pointer overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-[#f7f1be] rounded-2xl p-0 flex-shrink-0 w-80"
+                className="group cursor-pointer overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-[#f7f1be] rounded-2xl p-0 flex-shrink-0 w-72 sm:w-80"
               >
                 <div className="aspect-square overflow-hidden relative">
                   <img
@@ -371,11 +371,11 @@ export default function SavronHomepage() {
                   
                 </div>
                 
-                <CardContent className="p-4 relative mt-0">
-                  <h3 className="text-lg font-serif font-bold mb-2 group-hover:text-primary transition-colors">
+                <CardContent className="p-3 sm:p-4 relative mt-0">
+                  <h3 className="text-base sm:text-lg font-serif font-bold mb-2 group-hover:text-primary transition-colors">
                     {collection.name}
                   </h3>
-                  <p className="text-muted-foreground text-sm mb-3 leading-relaxed font-light">
+                  <p className="text-muted-foreground text-xs sm:text-sm mb-3 leading-relaxed font-light">
                     {collection.description}
                   </p>
                   
@@ -385,7 +385,7 @@ export default function SavronHomepage() {
                       <Badge
                         key={idx}
                         variant="outline"
-                        className="text-xs border-accent/30 text-accent bg-accent/5 px-2 py-1"
+                        className="text-xs border-accent/30 text-accent bg-accent/5 px-1.5 sm:px-2 py-0.5 sm:py-1"
                       >
                         {feature}
                       </Badge>
@@ -394,7 +394,7 @@ export default function SavronHomepage() {
                   
                   <Button
                     variant="outline"
-                    className="w-full group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-accent group-hover:text-white group-hover:border-transparent transition-all duration-500 transform group-hover:scale-105 shadow-md hover:shadow-lg bg-transparent border-accent/40 text-accent hover:text-white font-semibold py-2 text-sm"
+                    className="w-full group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-accent group-hover:text-white group-hover:border-transparent transition-all duration-500 transform group-hover:scale-105 shadow-md hover:shadow-lg bg-transparent border-accent/40 text-accent hover:text-white font-semibold py-2 text-xs sm:text-sm"
                   >
                     <a href={`/view-details?id=${collection.id}`} className="text-inherit flex items-center justify-center">
                       {collection.isNewProduct ? "View Product" : "View Collection"}
@@ -412,9 +412,9 @@ export default function SavronHomepage() {
       {/* Premium Dark Chocolate Section 1 */}
       <section className="pb-0 relative overflow-hidden">
         <div className="w-full">
-          <div className="grid lg:grid-cols-2 gap-0 min-h-[600px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[600px]">
             {/* Left Panel - Dark Background with Premium Products */}
-            <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 p-12 lg:p-16 flex flex-col justify-center relative">
+            <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700 p-12 lg:p-16 flex flex-col justify-center relative order-2 lg:order-1">
               {/* Decorative Elements */}
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900/50 to-purple-800/30"></div>
               <div className="absolute top-8 right-8 w-32 h-32 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full blur-2xl"></div>
@@ -445,19 +445,19 @@ export default function SavronHomepage() {
             </div>
             
             {/* Right Panel - Single Premium Product Image */}
-            <div className="bg-gradient-to-br from-red-600 via-red-500 to-red-700 p-12 lg:p-16 flex items-center justify-center relative overflow-hidden">
+            <div className="bg-gradient-to-br from-red-600 via-red-500 to-red-700 p-12 lg:p-16 flex items-center justify-center relative overflow-hidden order-1 lg:order-2">
               {/* Decorative Elements */}
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-red-600/80 to-red-700/60"></div>
               <div className="absolute bottom-8 left-8 w-40 h-40 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full blur-3xl"></div>
               
               {/* Single Premium Product Image */}
-              <div className="relative z-10 transform rotate-12 hover:rotate-6 transition-transform duration-700">
+              <div className="relative z-10 transform rotate-6 sm:rotate-12 hover:rotate-3 sm:hover:rotate-6 transition-transform duration-700">
                 <div className="relative">
                   {/* Premium Product Image */}
                   <img
                     src={products.filter(product => product.premium)[0]?.images?.[0] || "/dark-chocolate-collection-luxury-packaging.jpg"}
                     alt="Savron Premium Chocolate"
-                    className="w-80 h-96 object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
+                    className="w-96 h-auto object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
                   />
                   
                   {/* Product Details Overlay */}
@@ -500,7 +500,7 @@ export default function SavronHomepage() {
                   <img
                     src={products.filter(product => product.premium)[1]?.images?.[0] || "/dark-chocolate-collection-luxury-packaging.jpg"}
                     alt="Savron Premium Chocolate"
-                    className="w-80 h-96 object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
+                    className="w-96 h-auto object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
                   />
                   
                   {/* Product Details Overlay */}
@@ -605,7 +605,7 @@ export default function SavronHomepage() {
                   <img
                     src={products.filter(product => product.premium)[2]?.images?.[0] || "/dark-chocolate-collection-luxury-packaging.jpg"}
                     alt="Savron Premium Chocolate"
-                    className="w-80 h-96 object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
+                    className="w-96 h-auto object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
                   />
                   
                   {/* Product Details Overlay */}
