@@ -806,20 +806,14 @@ export default function SavronHomepage() {
             </div>
             <div className="relative">
               {/* Main Image Container */}
-              <div className="relative">
-                <div className="aspect-[4/5] rounded-3xl overflow-hidden bg-gradient-to-br from-card to-amber-50/50 shadow-3xl transform hover:scale-105 transition-transform duration-700 border-4 border-primary/20">
-                  <img
-                    src="/chocolate-master-craftsman-working-with-cocoa-bean.jpg"
-                    alt="Master chocolatier at work"
-                    className="w-full h-full object-cover"
-                  />
-            </div>
-
-                {/* Floating Decorative Elements */}
-                <div className="absolute -top-8 -right-8 w-16 h-16 bg-gradient-to-br from-accent to-primary rounded-full animate-bounce shadow-2xl"></div>
-                <div className="absolute -bottom-6 -left-6 w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full animate-pulse shadow-xl"></div>
-                <div className="absolute top-1/3 -left-3 w-8 h-8 bg-gradient-to-br from-accent/80 to-primary/80 rounded-full animate-pulse delay-300 shadow-lg"></div>
-            </div>
+              <div className="relative w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+                <img
+                  src="/Young Female Chef Making Chocolate Truffles.jpg"
+                  alt="Master chocolatier at work"
+                  className="w-full h-full object-cover rounded-2xl"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-maroon-900/30 to-transparent rounded-2xl"></div>
+              </div>
             </div>
           </div>
         </div>

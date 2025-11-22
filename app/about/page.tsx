@@ -44,23 +44,33 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">
-                Our Story
+                Our Story 
               </h1>
               <p className="text-xl text-gray-600 leading-relaxed mb-8">
-                Founded in 1987 by master chocolatier Henri Savron, our journey began with a simple vision: to create
-                the world's finest artisan chocolates using traditional European techniques and the highest quality
-                ingredients.
+              Savron Chocolate began with a simple belief — every woman deserves a moment that is hers alone.
+A moment to breathe.
+A moment to celebrate.
+A moment to feel seen.
+
+Our founder grew up watching the women around her — mothers, sisters, friends — balancing dreams, responsibilities, and endless to-do lists. They gave their best to everyone, yet rarely paused for themselves. One day, while sharing homemade chocolate with a friend after a long, exhausting day, she realized something powerful:
+
+Chocolate isn’t just a treat — it’s comfort, confidence, and self-love wrapped in sweetness.
+
+And so, Savron Chocolate was born.
               </p>
               <p className="text-lg text-gray-600 leading-relaxed">
-                Today, three generations later, we continue to honor that legacy while pushing the boundaries of
-                chocolate craftsmanship.
+              Crafted in small batches, Savron isn’t just about flavors; it’s about feelings. Each bar is made to remind women that they are strong, soft, fierce, gentle, bold, and beautiful — all at once. Whether it’s a quick break between meetings, a midnight craving, or a celebration of personal victories, Savron is here to make every moment richer.
+
+We partner with women artisans, empower female-led supply chains, and design our brand with the modern woman in mind. Savron represents more than chocolate — it’s a community, a celebration, and a piece of joy that women can call their own.
+
+Savron Chocolate — made for her moments.
               </p>
             </div>
-            <div className="relative">
+            <div className="relative w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="/chocolate-master-craftsman-working-with-cocoa-bean.jpg"
+                src="/Young Female Chef Making Chocolate Truffles.jpg"
                 alt="Master chocolatier at work"
-                className="w-full h-96 object-cover rounded-2xl shadow-2xl"
+                className="w-full h-full object-cover rounded-2xl"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-maroon-900/30 to-transparent rounded-2xl"></div>
             </div>
@@ -145,9 +155,9 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { name: "Henri Savron III", role: "Master Chocolatier", image: "/master-chocolatier-portrait.jpg" },
-              { name: "Marie Dubois", role: "Head of Innovation", image: "/female-chocolate-chef-portrait.jpg" },
-              { name: "Jean-Luc Martin", role: "Quality Director", image: "/quality-director-portrait.jpg" },
+              { name: "", role: "Master Chocolatier", image: "/choclate_lady.avif" },
+              { name: "", role: "Head of Innovation", image: "/female-chocolate-chef-portrait.jpg" },
+              { name: "", role: "Quality Director", image: "/quality-director-portrait.jpg" },
             ].map((member, index) => (
               <Card
                 key={index}
