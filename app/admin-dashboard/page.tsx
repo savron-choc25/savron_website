@@ -28,8 +28,16 @@ import {
   TrendingUp,
   Users,
   ShoppingCart,
-  Loader2
+  Loader2,
+  FileImage,
+  FileVideo
 } from "lucide-react"
+
+interface UploadedMedia {
+  url: string
+  name: string
+  type: "image" | "video"
+}
 
 interface Product {
   _id?: string
@@ -92,7 +100,12 @@ export default function AdminDashboard() {
     origin: ""
   })
   const [uploadingImages, setUploadingImages] = useState(false)
-  const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([])
+  const [uploadedMedia, setUploadedMedia] = useState<UploadedMedia[]>([])
+
+  const getFileNameFromUrl = (url: string, index: number) => {
+    const segment = url.split("/").pop()?.split("?")[0]
+    return segment ? decodeURIComponent(segment) : `file-${index + 1}`
+  }
 
   // Check authentication on component mount
   useEffect(() => {
@@ -202,9 +215,11 @@ export default function AdminDashboard() {
   const handleImageUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return
 
+    const fileList = Array.from(files)
+
     try {
       setUploadingImages(true)
-      const uploadPromises = Array.from(files).map(async (file) => {
+      const uploadPromises = fileList.map(async (file) => {
         const formData = new FormData()
         formData.append('file', file)
 
@@ -214,26 +229,31 @@ export default function AdminDashboard() {
         })
 
         if (!response.ok) {
-          throw new Error('Upload failed')
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.error || `Failed to upload ${file.name}`)
         }
 
         const data = await response.json()
-        return data.imageUrl
+        return {
+          url: data.imageUrl,
+          name: file.name,
+          type: (data.fileType || (file.type.startsWith('video/') ? 'video' : 'image')) as "image" | "video",
+        }
       })
 
-      const urls = await Promise.all(uploadPromises)
-      setUploadedImageUrls(prev => [...prev, ...urls])
+      const uploaded = await Promise.all(uploadPromises)
+      setUploadedMedia(prev => [...prev, ...uploaded])
       
       toast({
-        title: "Images Uploaded Successfully",
-        description: `${files.length} image(s) uploaded to Cloudinary`,
+        title: "Files Uploaded Successfully",
+        description: `${fileList.length} file(s) uploaded to Cloudinary`,
         variant: "success",
       })
     } catch (error) {
-      console.error('Error uploading images:', error)
+      console.error('Error uploading files:', error)
       toast({
         title: "Upload Error",
-        description: "Failed to upload images",
+        description: error instanceof Error ? error.message : "Failed to upload files",
         variant: "destructive",
       })
     } finally {
@@ -242,7 +262,7 @@ export default function AdminDashboard() {
   }
 
   const removeImage = (index: number) => {
-    setUploadedImageUrls(prev => prev.filter((_, i) => i !== index))
+    setUploadedMedia(prev => prev.filter((_, i) => i !== index))
   }
 
   const addArrayField = (field: string) => {
@@ -276,6 +296,13 @@ export default function AdminDashboard() {
       weight: product.weight || "",
       origin: product.origin || ""
     })
+    setUploadedMedia(
+      product.images.map((url, index) => ({
+        url,
+        name: getFileNameFromUrl(url, index),
+        type: url.includes('/video/') || /\.(mp4|mov|webm)(\?|$)/i.test(url) ? "video" : "image",
+      }))
+    )
     setActiveTab("add-product")
   }
 
@@ -334,7 +361,7 @@ export default function AdminDashboard() {
         category: editFormData.category,
         inStock: editFormData.inStock,
         premium: editFormData.premium,
-        images: editingProduct.images, // Keep existing images for now
+        images: uploadedMedia.map((media) => media.url),
         ingredients: editFormData.ingredients.filter(ing => ing.trim() !== ""),
         allergens: editFormData.allergens.filter(all => all.trim() !== ""),
         features: editFormData.features.filter(feat => feat.trim() !== ""),
@@ -360,6 +387,7 @@ export default function AdminDashboard() {
         
         // Reset form and fetch updated products
         setEditingProduct(null)
+        setUploadedMedia([])
         setEditFormData({
           name: "",
           description: "",
@@ -397,6 +425,7 @@ export default function AdminDashboard() {
 
   const cancelEdit = () => {
     setEditingProduct(null)
+    setUploadedMedia([])
     setEditFormData({
       name: "",
       description: "",
@@ -436,7 +465,7 @@ export default function AdminDashboard() {
         category: formData.category,
         inStock: formData.inStock,
         premium: formData.premium,
-        images: uploadedImageUrls, // Use uploaded Cloudinary URLs
+        images: uploadedMedia.map((media) => media.url),
         ingredients: formData.ingredients.filter(ing => ing.trim() !== ""),
         allergens: formData.allergens.filter(all => all.trim() !== ""),
         features: formData.features.filter(feat => feat.trim() !== ""),
@@ -467,7 +496,7 @@ export default function AdminDashboard() {
           weight: "",
           origin: ""
         })
-        setUploadedImageUrls([]) // Clear uploaded images
+        setUploadedMedia([])
 
         toast({
           title: "Product Added Successfully",
@@ -731,7 +760,10 @@ export default function AdminDashboard() {
                         type="file"
                         multiple
                         accept="image/*,video/*"
-                        onChange={(e) => handleImageUpload(e.target.files)}
+                        onChange={(e) => {
+                          handleImageUpload(e.target.files)
+                          e.target.value = ""
+                        }}
                         className="hidden"
                         id="image-upload"
                         disabled={uploadingImages}
@@ -746,46 +778,41 @@ export default function AdminDashboard() {
                           <div className="flex flex-col items-center">
                             <Upload className="h-8 w-8 text-gray-400 mb-2" />
                             <p className="text-sm font-medium text-gray-600">
-                              Click to upload images or videos
+                              Click to select multiple images or videos
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
-                              Supports: JPG, PNG, GIF, MP4, MOV (Max 5MB each)
+                              Supports: JPG, PNG, GIF, MP4, MOV (Max 10MB each)
                             </p>
                           </div>
                         )}
                       </label>
                     </div>
 
-                    {/* Uploaded Images Preview */}
-                    {uploadedImageUrls.length > 0 && (
+                    {uploadedMedia.length > 0 && (
                       <div className="space-y-2">
-                        <Label>Uploaded Media ({uploadedImageUrls.length})</Label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {uploadedImageUrls.map((url, index) => (
-                            <div key={index} className="relative group">
-                              <div className="aspect-square rounded-lg overflow-hidden border">
-                                {url.includes('video') ? (
-                                  <video
-                                    src={url}
-                                    className="w-full h-full object-cover"
-                                    controls
-                                  />
+                        <Label>Uploaded Files ({uploadedMedia.length})</Label>
+                        <div className="space-y-2">
+                          {uploadedMedia.map((media, index) => (
+                            <div
+                              key={`${media.url}-${index}`}
+                              className="flex items-center justify-between gap-3 rounded-lg border bg-gray-50 px-3 py-2"
+                            >
+                              <div className="flex min-w-0 items-center gap-2">
+                                {media.type === "video" ? (
+                                  <FileVideo className="h-4 w-4 shrink-0 text-gray-500" />
                                 ) : (
-                                  <img
-                                    src={url}
-                                    alt={`Upload ${index + 1}`}
-                                    className="w-full h-full object-cover"
-                                  />
+                                  <FileImage className="h-4 w-4 shrink-0 text-gray-500" />
                                 )}
+                                <span className="truncate text-sm text-gray-700">{media.name}</span>
                               </div>
                               <Button
                                 type="button"
-                                variant="destructive"
+                                variant="ghost"
                                 size="sm"
-                                className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                                 onClick={() => removeImage(index)}
                               >
-                                <X className="h-3 w-3" />
+                                <X className="h-4 w-4" />
                               </Button>
                             </div>
                           ))}

@@ -25,13 +25,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate file size (10MB limit for videos, 5MB for images)
-    const maxImageSize = 5 * 1024 * 1024 // 5MB
+    // Validate file size (10MB limit for images and videos)
+    const maxImageSize = 10 * 1024 * 1024 // 10MB
     const maxVideoSize = 10 * 1024 * 1024 // 10MB
     const maxSize = file.type.startsWith('video/') ? maxVideoSize : maxImageSize
     
     if (file.size > maxSize) {
-      const sizeLimit = file.type.startsWith('video/') ? '10MB' : '5MB'
+      const sizeLimit = '10MB'
       return NextResponse.json(
         { error: `File too large. Maximum size is ${sizeLimit}.` },
         { status: 400 }

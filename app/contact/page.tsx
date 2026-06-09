@@ -53,13 +53,13 @@ export default function ContactPage() {
       {/* Contact Form & Info */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Contact Form */}
-            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-3 pb-3">
-                <h2 className="text-2xl font-serif font-bold mb-2 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">Send us a Message</h2>
-                <form className="space-y-2">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm self-start w-full py-4 gap-0">
+              <CardContent className="p-5">
+                <h2 className="text-2xl font-serif font-bold mb-4 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">Send us a Message</h2>
+                <form className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <Label htmlFor="firstName" className="text-maroon-700 font-semibold text-sm">
                         First Name
@@ -120,13 +120,13 @@ export default function ContactPage() {
                     <Textarea
                       id="message"
                       placeholder="Tell us more about your inquiry..."
-                      rows={2}
-                      className="border-maroon-200 focus:border-maroon-500 focus:ring-maroon-500"
+                      rows={3}
+                      className="border-maroon-200 focus:border-maroon-500 focus:ring-maroon-500 min-h-[72px] resize-none"
                     />
                   </div>
                   <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-maroon-700 to-maroon-600 hover:from-maroon-800 hover:to-maroon-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 h-8 mb-0"
+                    className="w-full bg-gradient-to-r from-maroon-700 to-maroon-600 hover:from-maroon-800 hover:to-maroon-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 h-9"
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Send Message
