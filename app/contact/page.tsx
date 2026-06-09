@@ -3,17 +3,30 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import Link from "next/link"
-import { MapPin, Phone, Mail, Clock, Send } from "lucide-react"
+import { MapPin, Phone, Mail, Clock, Send, ExternalLink } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+
+const STORE_LOCATION = {
+  name: "Savron Chocolate Co.",
+  lines: [
+    "Unit No.13, Shrikant Industrial Estate Rd No.21",
+    "Sathe Nagar, Thane (West)",
+    "Maharashtra 400604, India",
+  ],
+  fullAddress:
+    "Unit No.13, Shrikant Industrial Estate Rd No.21, Sathe Nagar, Thane (West), Maharashtra 400604, India",
+  mapsShareUrl: "https://share.google/S9ULkl6iyYrr6klzS",
+  mapsEmbedUrl:
+    "https://maps.google.com/maps?q=Unit+No.13,+Shrikant+Industrial+Estate+Rd+No.21,+Sathe+Nagar,+Thane+(West),+Maharashtra+400604,+India&hl=en&z=16&output=embed",
+}
 
 export default function ContactPage() {
   const contactInfo = [
     {
       icon: <MapPin className="h-5 w-5" />,
       title: "Visit Our Boutique",
-      details: ["Unit No.13, Shrikant Industrial Estate Rd No.21", "Sathe Nagar, Thane - Mumbai-400604"],
+      details: STORE_LOCATION.lines,
     },
     {
       icon: <Phone className="h-5 w-5" />,
@@ -55,15 +68,15 @@ export default function ContactPage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
             {/* Contact Form */}
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm w-full py-0 gap-0 h-full">
-              <CardContent className="p-6">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm w-full py-0 gap-0 self-start">
+              <CardContent className="p-5">
                 <h2 className="text-2xl font-serif font-bold mb-1 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">
                   Send us a Message
                 </h2>
-                <p className="text-sm text-gray-500 mb-5">
+                <p className="text-sm text-gray-500 mb-4">
                   Fill in the form and our team will get back to you shortly.
                 </p>
-                <form className="space-y-3">
+                <form className="space-y-2.5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <Label htmlFor="firstName" className="text-maroon-700 font-semibold text-sm">
@@ -125,8 +138,8 @@ export default function ContactPage() {
                     <Textarea
                       id="message"
                       placeholder="Tell us more about your inquiry..."
-                      rows={3}
-                      className="border-maroon-200 focus:border-maroon-500 focus:ring-maroon-500 min-h-[72px] resize-none"
+                      rows={2}
+                      className="border-maroon-200 focus:border-maroon-500 focus:ring-maroon-500 min-h-[60px] resize-none"
                     />
                   </div>
                   <Button
@@ -141,13 +154,13 @@ export default function ContactPage() {
             </Card>
 
             {/* Contact Information */}
-            <div className="flex flex-col gap-5 h-full">
+            <div className="flex flex-col gap-4">
               <div>
                 <h2 className="text-2xl font-serif font-bold mb-1 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">
                   Contact Information
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Visit our boutique in Thane or reach out through any channel below.
+                  Visit us at our Thane boutique or reach out through any channel below.
                 </p>
               </div>
 
@@ -177,20 +190,39 @@ export default function ContactPage() {
                   </Card>
                 ))}
               </div>
-
-              <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm py-0 gap-0 mt-auto">
-                <CardContent className="p-0">
-                  <div className="h-36 sm:h-40 bg-gradient-to-br from-maroon-100 to-amber-100 rounded-xl flex items-center justify-center">
-                    <div className="text-center px-4">
-                      <MapPin className="h-8 w-8 text-maroon-600 mx-auto mb-2" />
-                      <p className="text-maroon-700 font-semibold text-sm">Find Our Boutique</p>
-                      <p className="text-gray-600 text-xs mt-1">Thane, Mumbai — 400604</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
+
+          {/* Full-width Map */}
+          <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm py-0 gap-0 mt-8 overflow-hidden">
+            <CardContent className="p-0">
+              <div className="relative w-full h-64 sm:h-80 md:h-96">
+                <iframe
+                  title={`${STORE_LOCATION.name} location map`}
+                  src={STORE_LOCATION.mapsEmbedUrl}
+                  className="absolute inset-0 h-full w-full border-0"
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border-t border-maroon-100/60">
+                <div>
+                  <p className="text-sm font-semibold text-maroon-800 mb-1">{STORE_LOCATION.name}</p>
+                  <p className="text-sm text-gray-600 leading-relaxed">{STORE_LOCATION.fullAddress}</p>
+                </div>
+                <a
+                  href={STORE_LOCATION.mapsShareUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 shrink-0 text-sm font-medium text-maroon-700 hover:text-maroon-900 transition-colors"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Open in Google Maps
+                </a>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
