@@ -10,6 +10,7 @@ import { useCart, cartUtils } from "@/contexts/CartContext"
 import { useToast } from "@/contexts/ToastContext"
 import Link from "next/link"
 import { products as defaultProducts } from "@/data/products"
+import { getOptimizedImageUrl } from "@/lib/image-utils"
 import { 
   Star, 
   Heart, 
@@ -243,11 +244,15 @@ export default function CollectionsPage() {
                 key={product._id}
                   className="group cursor-pointer overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-white/80 backdrop-blur-sm rounded-2xl"
               >
-                  <div className="aspect-square overflow-hidden relative">
+                  <div className="aspect-square overflow-hidden relative bg-gray-50 flex items-center justify-center p-4">
                   <img
-                    src={product.images[0] || "/placeholder.svg"}
+                    src={getOptimizedImageUrl(product.images[0] || "/placeholder.svg", {
+                      width: 800,
+                      height: 800,
+                      fit: 'contain',
+                    })}
                     alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      className="max-w-full max-h-full object-contain"
                     />
                     
                     {/* Stock Status Badge */}
@@ -341,11 +346,15 @@ export default function CollectionsPage() {
                   className="group cursor-pointer overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm rounded-2xl"
                 >
                   <div className="flex flex-col md:flex-row">
-                    <div className="md:w-1/3 aspect-square md:aspect-auto overflow-hidden relative">
+                    <div className="md:w-1/3 aspect-square md:aspect-auto overflow-hidden relative bg-gray-50 flex items-center justify-center p-4 min-h-[220px]">
                       <img
-                        src={product.images[0] || "/placeholder.svg"}
+                        src={getOptimizedImageUrl(product.images[0] || "/placeholder.svg", {
+                          width: 600,
+                          height: 600,
+                          fit: 'contain',
+                        })}
                         alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="max-w-full max-h-full object-contain"
                       />
                       
                       {/* Stock Status Badge */}

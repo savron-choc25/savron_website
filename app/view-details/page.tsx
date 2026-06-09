@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar"
 import { useCart, cartUtils } from "@/contexts/CartContext"
 import { useToast } from "@/contexts/ToastContext"
 import { getProductById, Product } from "@/data/products"
+import { getOptimizedImageUrl } from "@/lib/image-utils"
 import { 
   ArrowLeft, 
   ShoppingCart, 
@@ -188,11 +189,15 @@ export default function ProductDetailsPage() {
           {/* Product Images */}
           <div className="space-y-4">
             {/* Main Image */}
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-white shadow-2xl">
+            <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-50 shadow-2xl">
               <img 
-                src={currentProduct.images[selectedImage]} 
+                src={getOptimizedImageUrl(currentProduct.images[selectedImage], {
+                  width: 1200,
+                  height: 1200,
+                  fit: 'contain',
+                })} 
                 alt={currentProduct.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
               
               {/* Image Navigation */}
@@ -247,9 +252,9 @@ export default function ProductDetailsPage() {
                   }`}
                 >
                   <img 
-                    src={image} 
+                    src={getOptimizedImageUrl(image, { width: 200, height: 200, fit: 'contain' })} 
                     alt={`${currentProduct.name} ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain bg-gray-50 p-1"
                   />
                 </button>
               ))}

@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useCart, cartUtils } from "@/contexts/CartContext"
 import { useToast } from "@/contexts/ToastContext"
+import { getOptimizedImageUrl } from "@/lib/image-utils"
 import {
   Star,
   Award,
@@ -341,11 +342,15 @@ export default function SavronHomepage() {
                 key={index}
                 className="group cursor-pointer overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-[#f7f1be] rounded-2xl p-0 flex-shrink-0 w-72 sm:w-80"
               >
-                <div className="aspect-square overflow-hidden relative">
+                <div className="aspect-square overflow-hidden relative bg-gray-50 flex items-center justify-center p-4">
                   <img
-                    src={collection.image || "/placeholder.svg"}
+                    src={getOptimizedImageUrl(collection.image || "/placeholder.svg", {
+                      width: 800,
+                      height: 800,
+                      fit: 'contain',
+                    })}
                     alt={collection.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="max-w-full max-h-full object-contain"
                   />
                   
                   {/* Product Badge */}

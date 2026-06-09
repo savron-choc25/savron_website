@@ -8,18 +8,32 @@ cloudinary.config({
 
 export default cloudinary
 
+const MAX_IMAGE_DIMENSION = 2000
+
 export async function uploadImageToCloudinary(file: File): Promise<string> {
   try {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    
+    const isVideo = file.type.startsWith('video/')
+
     return new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
           folder: process.env.CLOUDINARY_FOLDER || 'products',
-          resource_type: file.type.startsWith('video/') ? 'video' : 'auto',
-          quality: 'auto',
-          fetch_format: 'auto',
+          resource_type: isVideo ? 'video' : 'image',
+          ...(isVideo
+            ? {}
+            : {
+                transformation: [
+                  {
+                    width: MAX_IMAGE_DIMENSION,
+                    height: MAX_IMAGE_DIMENSION,
+                    crop: 'limit',
+                  },
+                  { quality: 'auto:good' },
+                  { fetch_format: 'auto' },
+                ],
+              }),
         },
         (error, result) => {
           if (error) {

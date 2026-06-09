@@ -781,7 +781,7 @@ export default function AdminDashboard() {
                               Click to select multiple images or videos
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
-                              Supports: JPG, PNG, GIF, MP4, MOV (Max 10MB each)
+                              Images auto-compressed to max 2000×2000. JPG, PNG, GIF up to 20MB; videos up to 10MB
                             </p>
                           </div>
                         )}

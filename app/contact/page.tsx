@@ -11,22 +11,22 @@ import Footer from "@/components/Footer"
 export default function ContactPage() {
   const contactInfo = [
     {
-      icon: <MapPin className="h-6 w-6" />,
+      icon: <MapPin className="h-5 w-5" />,
       title: "Visit Our Boutique",
       details: ["Unit No.13, Shrikant Industrial Estate Rd No.21", "Sathe Nagar, Thane - Mumbai-400604"],
     },
     {
-      icon: <Phone className="h-6 w-6" />,
+      icon: <Phone className="h-5 w-5" />,
       title: "Call Us",
       details: ["+91 8879555533", ],
     },
     {
-      icon: <Mail className="h-6 w-6" />,
+      icon: <Mail className="h-5 w-5" />,
       title: "Email Us",
       details: ["savron1785@gmail.com", ],
     },
     {
-      icon: <Clock className="h-6 w-6" />,
+      icon: <Clock className="h-5 w-5" />,
       title: "Business Hours",
       details: ["Monday - Saturday: 9AM - 9PM", ],
     },
@@ -51,13 +51,18 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form & Info */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <section className="py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
             {/* Contact Form */}
-            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm self-start w-full py-4 gap-0">
-              <CardContent className="p-5">
-                <h2 className="text-2xl font-serif font-bold mb-4 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">Send us a Message</h2>
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm w-full py-0 gap-0 h-full">
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-serif font-bold mb-1 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">
+                  Send us a Message
+                </h2>
+                <p className="text-sm text-gray-500 mb-5">
+                  Fill in the form and our team will get back to you shortly.
+                </p>
                 <form className="space-y-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="space-y-1">
@@ -136,30 +141,33 @@ export default function ContactPage() {
             </Card>
 
             {/* Contact Information */}
-            <div className="space-y-8">
+            <div className="flex flex-col gap-5 h-full">
               <div>
-                <h2 className="text-3xl font-serif font-bold mb-6 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">Contact Information</h2>
-                <p className="text-lg text-gray-600 leading-relaxed mb-8">
-                  Visit our boutique in the heart of Paris or reach out to us through any of the channels below. Our
-                  team is always ready to assist you with your chocolate needs.
+                <h2 className="text-2xl font-serif font-bold mb-1 bg-gradient-to-r from-primary via-accent to-amber-300 bg-clip-text text-transparent">
+                  Contact Information
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Visit our boutique in Thane or reach out through any channel below.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {contactInfo.map((info, index) => (
                   <Card
                     key={index}
-                    className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                    className={`border border-maroon-100/60 shadow-md hover:shadow-lg transition-all duration-300 bg-white/90 backdrop-blur-sm py-0 gap-0 ${
+                      index === 0 ? "sm:col-span-2" : ""
+                    }`}
                   >
-                    <CardContent className="p-6">
-                      <div className="flex items-start space-x-4">
-                        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-maroon-700 to-amber-600 text-white rounded-full flex items-center justify-center">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-maroon-700 to-amber-600 text-white rounded-full flex items-center justify-center">
                           {info.icon}
                         </div>
-                        <div>
-                          <h3 className="text-lg font-semibold text-maroon-800 mb-2">{info.title}</h3>
+                        <div className="min-w-0">
+                          <h3 className="text-sm font-semibold text-maroon-800 mb-1">{info.title}</h3>
                           {info.details.map((detail, detailIndex) => (
-                            <p key={detailIndex} className="text-gray-600">
+                            <p key={detailIndex} className="text-sm text-gray-600 leading-snug">
                               {detail}
                             </p>
                           ))}
@@ -170,14 +178,13 @@ export default function ContactPage() {
                 ))}
               </div>
 
-              {/* Map Placeholder */}
-              <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm py-0 gap-0 mt-auto">
                 <CardContent className="p-0">
-                  <div className="h-64 bg-gradient-to-br from-maroon-100 to-amber-100 rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <MapPin className="h-12 w-12 text-maroon-600 mx-auto mb-4" />
-                      <p className="text-maroon-700 font-semibold">Interactive Map</p>
-                      <p className="text-gray-600 text-sm">Find us in the heart of Paris</p>
+                  <div className="h-36 sm:h-40 bg-gradient-to-br from-maroon-100 to-amber-100 rounded-xl flex items-center justify-center">
+                    <div className="text-center px-4">
+                      <MapPin className="h-8 w-8 text-maroon-600 mx-auto mb-2" />
+                      <p className="text-maroon-700 font-semibold text-sm">Find Our Boutique</p>
+                      <p className="text-gray-600 text-xs mt-1">Thane, Mumbai — 400604</p>
                     </div>
                   </div>
                 </CardContent>

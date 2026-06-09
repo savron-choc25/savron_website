@@ -10,6 +10,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useCart, cartUtils } from "@/contexts/CartContext"
 import { useToast } from "@/contexts/ToastContext"
+import { getOptimizedImageUrl } from "@/lib/image-utils"
 
 export default function ShopPage() {
   const { dispatch } = useCart()
@@ -184,13 +185,16 @@ export default function ShopPage() {
                 key={product.id}
                 className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-white/80 backdrop-blur-sm"
               >
-                <div className="relative overflow-hidden">
+                <div className="relative aspect-square overflow-hidden bg-gray-50 flex items-center justify-center p-4">
                   <img
-                    src={product.image || "/placeholder.svg"}
+                    src={getOptimizedImageUrl(product.image || "/placeholder.svg", {
+                      width: 800,
+                      height: 800,
+                      fit: 'contain',
+                    })}
                     alt={product.name}
-                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="max-w-full max-h-full object-contain"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 
                   {/* Badges */}
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
@@ -213,7 +217,7 @@ export default function ShopPage() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="absolute top-4 right-4 text-white hover:text-red-400 hover:bg-white/20"
+                    className="absolute top-4 right-4 text-gray-600 hover:text-red-500 hover:bg-white/80"
                   >
                     <Heart className="h-4 w-4" />
                   </Button>
@@ -222,7 +226,7 @@ export default function ShopPage() {
                   <Button
                     size="sm"
                     onClick={() => handleAddToCart(product)}
-                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 text-maroon-800 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-primary text-white hover:bg-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-md"
                   >
                     Quick Add
                   </Button>
