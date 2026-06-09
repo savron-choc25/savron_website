@@ -25,14 +25,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Images up to 20MB accepted (auto-compressed to max 2000x2000 on upload)
-    const maxImageSize = 20 * 1024 * 1024 // 20MB
-    const maxVideoSize = 10 * 1024 * 1024 // 10MB
+    // Images are compressed client-side before upload (Vercel ~4.5MB request limit)
+    const maxImageSize = 4 * 1024 * 1024 // 4MB safety cap after client compression
+    const maxVideoSize = 4 * 1024 * 1024 // 4MB for videos on serverless
     const maxSize = file.type.startsWith('video/') ? maxVideoSize : maxImageSize
     const isImage = file.type.startsWith('image/')
     
     if (file.size > maxSize) {
-      const sizeLimit = isImage ? '20MB' : '10MB'
+      const sizeLimit = isImage ? '4MB' : '4MB'
       return NextResponse.json(
         { error: `File too large. Maximum size is ${sizeLimit}.` },
         { status: 400 }

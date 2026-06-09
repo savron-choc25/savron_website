@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useToast } from "@/contexts/ToastContext"
+import { prepareFileForUpload } from "@/lib/compress-image"
 import { 
   Plus, 
   Package, 
@@ -220,8 +221,9 @@ export default function AdminDashboard() {
     try {
       setUploadingImages(true)
       const uploadPromises = fileList.map(async (file) => {
+        const preparedFile = await prepareFileForUpload(file)
         const formData = new FormData()
-        formData.append('file', file)
+        formData.append('file', preparedFile)
 
         const response = await fetch('/api/upload', {
           method: 'POST',
@@ -229,6 +231,9 @@ export default function AdminDashboard() {
         })
 
         if (!response.ok) {
+          if (response.status === 413) {
+            throw new Error(`${file.name} is too large. It will be auto-compressed — try again or use a smaller file.`)
+          }
           const errorData = await response.json().catch(() => ({}))
           throw new Error(errorData.error || `Failed to upload ${file.name}`)
         }
@@ -781,7 +786,7 @@ export default function AdminDashboard() {
                               Click to select multiple images or videos
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
-                              Images auto-compressed to max 2000×2000. JPG, PNG, GIF up to 20MB; videos up to 10MB
+                              Images up to 2000×2000 (auto-compressed before upload). Max ~3.5MB per file
                             </p>
                           </div>
                         )}
