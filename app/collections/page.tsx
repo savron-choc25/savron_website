@@ -9,7 +9,6 @@ import Footer from "@/components/Footer"
 import { useCart, cartUtils } from "@/contexts/CartContext"
 import { useToast } from "@/contexts/ToastContext"
 import Link from "next/link"
-import { products as defaultProducts } from "@/data/products"
 import { getOptimizedImageUrl } from "@/lib/image-utils"
 import { 
   Star, 
@@ -47,61 +46,25 @@ export default function CollectionsPage() {
     try {
       setLoading(true)
       const response = await fetch('/api/products')
-      let adminProducts = []
-      
+
       if (response.ok) {
-        adminProducts = await response.json()
+        const adminProducts = await response.json()
+        setProducts(adminProducts)
       } else {
-        console.error('Failed to fetch admin products')
+        setProducts([])
+        toast({
+          title: "Error",
+          description: "Failed to load products. Please try again later.",
+          variant: "destructive",
+        })
       }
-
-      // Convert default products to match the database format
-      const convertedDefaultProducts = defaultProducts.map(product => ({
-        _id: `default-${product.id}`,
-        name: product.name,
-        price: product.price,
-        description: product.description,
-        category: product.category,
-        images: product.images,
-        inStock: product.inStock,
-        weight: "100g",
-        origin: "Belgium",
-        ingredients: product.ingredients,
-        allergens: ["Milk", "Soy"],
-        features: product.features || [],
-        badges: product.badges,
-        rating: product.rating,
-        reviews: product.reviews.length
-      }))
-
-      // Combine default products with admin products
-      const allProducts = [...convertedDefaultProducts, ...adminProducts]
-      setProducts(allProducts)
     } catch (error) {
       console.error('Error fetching products:', error)
-      // If there's an error, still show default products
-      const convertedDefaultProducts = defaultProducts.map(product => ({
-        _id: `default-${product.id}`,
-        name: product.name,
-        price: product.price,
-        description: product.description,
-        category: product.category,
-        images: product.images,
-        inStock: product.inStock,
-        weight: "100g",
-        origin: "Belgium",
-        ingredients: product.ingredients,
-        allergens: ["Milk", "Soy"],
-        features: product.features || [],
-        badges: product.badges,
-        rating: product.rating,
-        reviews: product.reviews.length
-      }))
-      setProducts(convertedDefaultProducts)
+      setProducts([])
       toast({
-        title: "Warning",
-        description: "Showing default products only. Admin products unavailable.",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to load products. Please try again later.",
+        variant: "destructive",
       })
     } finally {
       setLoading(false)
@@ -237,7 +200,24 @@ export default function CollectionsPage() {
       {/* Collections Grid/List */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
-          {viewMode === 'grid' ? (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20 text-primary">
+              <Loader2 className="h-10 w-10 animate-spin mb-4" />
+              <p className="text-muted-foreground">Loading collections...</p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-xl font-serif font-bold text-primary mb-2">No products yet</p>
+              <p className="text-muted-foreground mb-6">
+                Products added from the admin dashboard will appear here.
+              </p>
+              <Link href="/shop">
+                <Button className="bg-gradient-to-r from-primary to-accent text-white">
+                  Browse Shop
+                </Button>
+              </Link>
+            </div>
+          ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
               {filteredProducts.map((product) => (
               <Card
