@@ -3,22 +3,24 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { MapPin, Phone, Mail, Clock, Send, ExternalLink } from "lucide-react"
+import { MapPin, Phone, Mail, Clock, Send, ExternalLink, Globe, Factory } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 
 const STORE_LOCATION = {
   name: "Savron Chocolate Co.",
   lines: [
-    "Unit No.13, Shrikant Industrial Estate Rd No.21",
-    "Sathe Nagar, Thane (West)",
-    "Maharashtra 400604, India",
+    "Unit No.1, Shri Krishna Vrindavan Apt,",
+    "Beside RJ Thakur College,",
+    "Swarakar Nagar, Thane,",
+    "Mumbai – 400606",
   ],
   fullAddress:
-    "Unit No.13, Shrikant Industrial Estate Rd No.21, Sathe Nagar, Thane (West), Maharashtra 400604, India",
-  mapsShareUrl: "https://share.google/S9ULkl6iyYrr6klzS",
+    "Unit No.1, Shri Krishna Vrindavan Apt, Beside RJ Thakur College, Swarakar Nagar, Thane, Mumbai – 400606",
+  mapsShareUrl:
+    "https://www.google.com/maps/search/?api=1&query=Unit+No.1,+Shri+Krishna+Vrindavan+Apt,+Beside+RJ+Thakur+College,+Swarakar+Nagar,+Thane,+Mumbai+400606",
   mapsEmbedUrl:
-    "https://maps.google.com/maps?q=Unit+No.13,+Shrikant+Industrial+Estate+Rd+No.21,+Sathe+Nagar,+Thane+(West),+Maharashtra+400604,+India&hl=en&z=16&output=embed",
+    "https://maps.google.com/maps?q=Unit+No.1,+Shri+Krishna+Vrindavan+Apt,+Beside+RJ+Thakur+College,+Swarakar+Nagar,+Thane,+Mumbai+400606,+India&hl=en&z=16&output=embed",
 }
 
 export default function ContactPage() {
@@ -27,21 +29,33 @@ export default function ContactPage() {
       icon: <MapPin className="h-5 w-5" />,
       title: "Visit Our Boutique",
       details: STORE_LOCATION.lines,
+      wide: true,
     },
     {
       icon: <Phone className="h-5 w-5" />,
       title: "Call Us",
-      details: ["+91 8879555533", ],
+      details: ["+91 9820578037 / 9821030195"],
+    },
+    {
+      icon: <Factory className="h-5 w-5" />,
+      title: "Factory",
+      details: ["887955533"],
     },
     {
       icon: <Mail className="h-5 w-5" />,
       title: "Email Us",
-      details: ["savron1785@gmail.com", ],
+      details: ["savron1785@gmail.com"],
+    },
+    {
+      icon: <Globe className="h-5 w-5" />,
+      title: "Website",
+      details: ["www.savron.co"],
+      link: "https://www.savron.co",
     },
     {
       icon: <Clock className="h-5 w-5" />,
       title: "Business Hours",
-      details: ["Monday - Saturday: 9AM - 9PM", ],
+      details: ["Monday - Saturday: 9AM - 9PM"],
     },
   ]
 
@@ -169,7 +183,7 @@ export default function ContactPage() {
                   <Card
                     key={index}
                     className={`border border-maroon-100/60 shadow-md hover:shadow-lg transition-all duration-300 bg-white/90 backdrop-blur-sm py-0 gap-0 ${
-                      index === 0 ? "sm:col-span-2" : ""
+                      info.wide ? "sm:col-span-2" : ""
                     }`}
                   >
                     <CardContent className="p-4">
@@ -181,7 +195,18 @@ export default function ContactPage() {
                           <h3 className="text-sm font-semibold text-maroon-800 mb-1">{info.title}</h3>
                           {info.details.map((detail, detailIndex) => (
                             <p key={detailIndex} className="text-sm text-gray-600 leading-snug">
-                              {detail}
+                              {info.link ? (
+                                <a
+                                  href={info.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="hover:text-maroon-700 transition-colors"
+                                >
+                                  {detail}
+                                </a>
+                              ) : (
+                                detail
+                              )}
                             </p>
                           ))}
                         </div>
