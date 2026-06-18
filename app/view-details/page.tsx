@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator"
 import Navbar from "@/components/Navbar"
 import { useCart, cartUtils } from "@/contexts/CartContext"
 import { useToast } from "@/contexts/ToastContext"
-import { getProductById, Product } from "@/data/products"
 import { getOptimizedImageUrl } from "@/lib/image-utils"
 import { 
   ArrowLeft, 
@@ -57,34 +56,14 @@ export default function ProductDetailsPage() {
 
       try {
         setLoading(true)
-        let foundProduct = null
-        
-        // Check if it's a default product ID (format: default-X)
-        if (productId.startsWith('default-')) {
-          const numericId = parseInt(productId.replace('default-', ''))
-          foundProduct = getProductById(numericId)
+        const response = await fetch(`/api/products/${productId}`)
+
+        if (response.ok) {
+          const foundProduct = await response.json()
+          setProduct(foundProduct)
         } else {
-          // Try to fetch from admin products API first
-          try {
-            const response = await fetch('/api/products')
-            if (response.ok) {
-              const adminProducts = await response.json()
-              foundProduct = adminProducts.find((p: any) => p._id === productId)
-            }
-          } catch (error) {
-            console.error('Failed to fetch admin products:', error)
-          }
-          
-          // If not found in admin products, try default products
-          if (!foundProduct) {
-            const numericId = parseInt(productId)
-            if (!isNaN(numericId)) {
-              foundProduct = getProductById(numericId)
-            }
-          }
+          setProduct(null)
         }
-        
-        setProduct(foundProduct || null)
       } catch (error) {
         console.error('Error fetching product:', error)
         setProduct(null)
@@ -96,35 +75,35 @@ export default function ProductDetailsPage() {
     fetchProduct()
   }, [productId])
 
-  // Use the found product or default to first product
-  const currentProduct = product || getProductById(1)!
-
   const handleAddToCart = () => {
+    if (!product) return
+
     cartUtils.addToCart(dispatch, {
-      id: currentProduct._id || currentProduct.id,
-      name: currentProduct.name,
-      price: currentProduct.price,
-      image: currentProduct.images?.[0] || "/placeholder.svg",
-      description: currentProduct.description,
-      inStock: currentProduct.inStock
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0] || "/placeholder.svg",
+      description: product.description,
+      inStock: product.inStock,
     })
-    
+
     toast({
       title: "Product successfully added to cart",
-      description: `${currentProduct.name} has been added to your cart.`,
+      description: `${product.name} has been added to your cart.`,
       variant: "success",
     })
   }
 
   const nextImage = () => {
-    setSelectedImage((prev) => (prev + 1) % currentProduct.images.length)
+    if (!product?.images?.length) return
+    setSelectedImage((prev) => (prev + 1) % product.images.length)
   }
 
   const prevImage = () => {
-    setSelectedImage((prev) => (prev - 1 + currentProduct.images.length) % currentProduct.images.length)
+    if (!product?.images?.length) return
+    setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length)
   }
 
-  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-[#fff5d6]">
@@ -143,8 +122,7 @@ export default function ProductDetailsPage() {
     )
   }
 
-  // Show error state if product not found
-  if (!currentProduct) {
+  if (!product) {
     return (
       <div className="min-h-screen bg-[#fff5d6]">
         <Navbar />
@@ -177,9 +155,9 @@ export default function ProductDetailsPage() {
             <span>/</span>
             <a href="/collections" className="hover:text-primary">Collections</a>
             <span>/</span>
-            <span className="text-primary">{currentProduct.category}</span>
+            <span className="text-primary">{product.category}</span>
             <span>/</span>
-            <span className="text-primary font-medium">{currentProduct.name}</span>
+            <span className="text-primary font-medium">{product.name}</span>
           </div>
         </div>
       </div>
@@ -191,17 +169,17 @@ export default function ProductDetailsPage() {
             {/* Main Image */}
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-50 shadow-2xl">
               <img 
-                src={getOptimizedImageUrl(currentProduct.images[selectedImage], {
+                src={getOptimizedImageUrl(product.images[selectedImage], {
                   width: 1200,
                   height: 1200,
                   fit: 'contain',
                 })} 
-                alt={currentProduct.name}
+                alt={product.name}
                 className="w-full h-full object-contain"
               />
               
               {/* Image Navigation */}
-              {currentProduct.images.length > 1 && (
+              {product.images.length > 1 && (
                 <>
                   <button 
                     onClick={prevImage}
@@ -220,13 +198,13 @@ export default function ProductDetailsPage() {
 
               {/* Badges */}
               <div className="absolute top-4 left-4 flex flex-col gap-2">
-                {currentProduct.premium && (
+                {product.premium && (
                   <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-bold shadow-lg">
                     <Crown className="w-3 h-3 mr-1" />
                     PREMIUM
                   </Badge>
                 )}
-                {currentProduct.badges && currentProduct.badges.map((badge, index) => (
+                {product.badges && product.badges.map((badge, index) => (
                   <Badge key={index} className="bg-accent text-white shadow-lg">
                     {badge}
                   </Badge>
@@ -241,7 +219,7 @@ export default function ProductDetailsPage() {
 
             {/* Thumbnail Images */}
             <div className="grid grid-cols-4 gap-3">
-              {currentProduct.images.map((image, index) => (
+              {product.images.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
@@ -253,7 +231,7 @@ export default function ProductDetailsPage() {
                 >
                   <img 
                     src={getOptimizedImageUrl(image, { width: 200, height: 200, fit: 'contain' })} 
-                    alt={`${currentProduct.name} ${index + 1}`}
+                    alt={`${product.name} ${index + 1}`}
                     className="w-full h-full object-contain bg-gray-50 p-1"
                   />
                 </button>
@@ -280,52 +258,52 @@ export default function ProductDetailsPage() {
             {/* Product Header */}
             <div>
               <div className="flex items-center gap-2 mb-2">
-                {currentProduct.category && (
+                {product.category && (
                   <Badge variant="outline" className="border-primary/20 text-primary">
-                    {currentProduct.category}
+                    {product.category}
                   </Badge>
                 )}
-                {currentProduct.brand && (
+                {product.brand && (
                   <Badge variant="outline" className="border-primary/20 text-primary">
-                    {currentProduct.brand}
+                    {product.brand}
                   </Badge>
                 )}
               </div>
               
               <h1 className="text-3xl lg:text-4xl font-serif font-bold text-primary mb-4">
-                {currentProduct.name}
+                {product.name}
               </h1>
               
               {/* Rating */}
-              {currentProduct.rating && (
+              {product.rating && (
                 <div className="flex items-center gap-3 mb-4">
                   <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (
                       <Star 
                         key={i} 
                         className={`w-5 h-5 ${
-                          i < Math.floor(currentProduct.rating) 
+                          i < Math.floor(product.rating) 
                             ? "fill-amber-400 text-amber-400" 
                             : "text-gray-300"
                         }`} 
                       />
                     ))}
                   </div>
-                  <span className="text-primary font-semibold">{currentProduct.rating}</span>
-                  {currentProduct.reviewCount && (
-                    <span className="text-primary/70">({currentProduct.reviewCount} reviews)</span>
+                  <span className="text-primary font-semibold">{product.rating}</span>
+                  {product.reviewCount && (
+                    <span className="text-primary/70">({product.reviewCount} reviews)</span>
                   )}
                 </div>
               )}
 
               {/* Price */}
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-3xl font-bold text-primary">₹{currentProduct.price.toLocaleString('en-IN')}</span>
-                {currentProduct.originalPrice && currentProduct.originalPrice > currentProduct.price && (
+                <span className="text-3xl font-bold text-primary">₹{product.price.toLocaleString('en-IN')}</span>
+                {product.originalPrice && product.originalPrice > product.price && (
                   <>
-                    <span className="text-xl text-primary/50 line-through">₹{currentProduct.originalPrice.toLocaleString('en-IN')}</span>
+                    <span className="text-xl text-primary/50 line-through">₹{product.originalPrice.toLocaleString('en-IN')}</span>
                     <Badge className="bg-green-100 text-green-800">
-                      Save ₹{(currentProduct.originalPrice - currentProduct.price).toLocaleString('en-IN')}
+                      Save ₹{(product.originalPrice - product.price).toLocaleString('en-IN')}
                     </Badge>
                   </>
                 )}
@@ -334,11 +312,11 @@ export default function ProductDetailsPage() {
 
             {/* Stock Status */}
             <div className="flex items-center gap-2">
-              {currentProduct.inStock ? (
+              {product.inStock ? (
                 <>
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   <span className="text-green-700 font-medium">
-                    In Stock ({currentProduct.stockCount} available)
+                    In Stock ({product.stockCount} available)
                   </span>
                 </>
               ) : (
@@ -380,10 +358,10 @@ export default function ProductDetailsPage() {
                 <Button 
                   className="flex-1 bg-gradient-to-r from-accent to-amber-500 hover:from-accent/90 hover:to-amber-500/90 text-white font-bold py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                   onClick={handleAddToCart}
-                  disabled={!currentProduct.inStock}
+                  disabled={!product.inStock}
                 >
                   <ShoppingCart className="w-5 h-5 mr-2" />
-                  Add to Cart - ₹{(currentProduct.price * quantity).toLocaleString('en-IN')}
+                  Add to Cart - ₹{(product.price * quantity).toLocaleString('en-IN')}
                 </Button>
                 
                 <Button
@@ -449,18 +427,18 @@ export default function ProductDetailsPage() {
                 <Card className="bg-white border-0 shadow-xl">
                   <CardContent className="p-6">
                     <p className="text-primary/80 leading-relaxed mb-4">
-                      {currentProduct.longDescription}
+                      {product.longDescription}
                     </p>
                     <Separator className="my-4" />
                     <h4 className="font-semibold text-primary mb-3">Key Features:</h4>
                     <ul className="space-y-2">
-                      {currentProduct.features && currentProduct.features.map((feature, index) => (
+                      {product.features && product.features.map((feature, index) => (
                         <li key={index} className="flex items-center gap-2 text-primary/80">
                           <div className="w-2 h-2 bg-accent rounded-full"></div>
                           {feature}
                         </li>
                       ))}
-                      {(!currentProduct.features || currentProduct.features.length === 0) && (
+                      {(!product.features || product.features.length === 0) && (
                         <li className="text-primary/60 italic">No features listed</li>
                       )}
                     </ul>
@@ -473,13 +451,13 @@ export default function ProductDetailsPage() {
                   <CardContent className="p-6">
                     <h4 className="font-semibold text-primary mb-4">Ingredients:</h4>
                     <ul className="space-y-2">
-                      {currentProduct.ingredients && currentProduct.ingredients.map((ingredient, index) => (
+                      {product.ingredients && product.ingredients.map((ingredient, index) => (
                         <li key={index} className="flex items-center gap-2 text-primary/80">
                           <Leaf className="w-4 h-4 text-green-500" />
                           {ingredient}
                         </li>
                       ))}
-                      {(!currentProduct.ingredients || currentProduct.ingredients.length === 0) && (
+                      {(!product.ingredients || product.ingredients.length === 0) && (
                         <li className="text-primary/60 italic">No ingredients listed</li>
                       )}
                     </ul>
@@ -491,54 +469,54 @@ export default function ProductDetailsPage() {
                 <Card className="bg-white border-0 shadow-xl">
                   <CardContent className="p-6">
                     <h4 className="font-semibold text-primary mb-4">Nutritional Information:</h4>
-                    {currentProduct.nutrition ? (
+                    {product.nutrition ? (
                       <div className="space-y-3">
-                        {currentProduct.nutrition.servingSize && (
+                        {product.nutrition.servingSize && (
                           <div className="flex justify-between">
                             <span className="text-primary/80">Serving Size:</span>
-                            <span className="text-primary font-medium">{currentProduct.nutrition.servingSize}</span>
+                            <span className="text-primary font-medium">{product.nutrition.servingSize}</span>
                           </div>
                         )}
-                        {currentProduct.nutrition.calories && (
+                        {product.nutrition.calories && (
                           <div className="flex justify-between">
                             <span className="text-primary/80">Calories:</span>
-                            <span className="text-primary font-medium">{currentProduct.nutrition.calories}</span>
+                            <span className="text-primary font-medium">{product.nutrition.calories}</span>
                           </div>
                         )}
-                        {currentProduct.nutrition.fat && (
+                        {product.nutrition.fat && (
                           <div className="flex justify-between">
                             <span className="text-primary/80">Total Fat:</span>
-                            <span className="text-primary font-medium">{currentProduct.nutrition.fat}</span>
+                            <span className="text-primary font-medium">{product.nutrition.fat}</span>
                           </div>
                         )}
-                        {currentProduct.nutrition.saturatedFat && (
+                        {product.nutrition.saturatedFat && (
                           <div className="flex justify-between">
                             <span className="text-primary/80">Saturated Fat:</span>
-                            <span className="text-primary font-medium">{currentProduct.nutrition.saturatedFat}</span>
+                            <span className="text-primary font-medium">{product.nutrition.saturatedFat}</span>
                           </div>
                         )}
-                        {currentProduct.nutrition.carbohydrates && (
+                        {product.nutrition.carbohydrates && (
                           <div className="flex justify-between">
                             <span className="text-primary/80">Carbohydrates:</span>
-                            <span className="text-primary font-medium">{currentProduct.nutrition.carbohydrates}</span>
+                            <span className="text-primary font-medium">{product.nutrition.carbohydrates}</span>
                           </div>
                         )}
-                        {currentProduct.nutrition.sugar && (
+                        {product.nutrition.sugar && (
                           <div className="flex justify-between">
                             <span className="text-primary/80">Sugar:</span>
-                            <span className="text-primary font-medium">{currentProduct.nutrition.sugar}</span>
+                            <span className="text-primary font-medium">{product.nutrition.sugar}</span>
                           </div>
                         )}
-                        {currentProduct.nutrition.protein && (
+                        {product.nutrition.protein && (
                           <div className="flex justify-between">
                             <span className="text-primary/80">Protein:</span>
-                            <span className="text-primary font-medium">{currentProduct.nutrition.protein}</span>
+                            <span className="text-primary font-medium">{product.nutrition.protein}</span>
                           </div>
                         )}
-                        {currentProduct.nutrition.sodium && (
+                        {product.nutrition.sodium && (
                           <div className="flex justify-between">
                             <span className="text-primary/80">Sodium:</span>
-                            <span className="text-primary font-medium">{currentProduct.nutrition.sodium}</span>
+                            <span className="text-primary font-medium">{product.nutrition.sodium}</span>
                           </div>
                         )}
                       </div>
@@ -553,8 +531,8 @@ export default function ProductDetailsPage() {
                 <Card className="bg-white border-0 shadow-xl">
                   <CardContent className="p-6">
                     <div className="space-y-6">
-                      {currentProduct.reviews && currentProduct.reviews.length > 0 ? (
-                        currentProduct.reviews.map((review) => (
+                      {product.reviews && product.reviews.length > 0 ? (
+                        product.reviews.map((review) => (
                         <div key={review.id} className="border-b border-primary/10 pb-4 last:border-b-0">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">

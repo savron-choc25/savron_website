@@ -1,11 +1,10 @@
-"use client"
-
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
-import { Star, Heart, ShoppingCart, Filter, Grid, List, Crown } from "lucide-react"
+import { Star, Heart, ShoppingCart, Filter, Grid, List, Crown, Loader2 } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { useCart, cartUtils } from "@/contexts/CartContext"
@@ -15,6 +14,45 @@ import { getOptimizedImageUrl } from "@/lib/image-utils"
 export default function ShopPage() {
   const { dispatch } = useCart()
   const { toast } = useToast()
+  const [products, setProducts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/products')
+      if (response.ok) {
+        const data = await response.json()
+        setProducts(
+          data.map((product: any) => ({
+            id: product._id,
+            name: product.name,
+            collection: product.category,
+            price: product.price,
+            originalPrice: null,
+            image: product.images?.[0] || '/placeholder.svg',
+            rating: 4.8,
+            reviews: 0,
+            bestseller: false,
+            premium: product.premium,
+            description: product.description,
+            inStock: product.inStock,
+          }))
+        )
+      } else {
+        setProducts([])
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      setProducts([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleAddToCart = (product: any) => {
     cartUtils.addToCart(dispatch, {
@@ -23,7 +61,7 @@ export default function ShopPage() {
       price: product.price,
       image: product.image,
       description: product.description,
-      inStock: true
+      inStock: product.inStock ?? true
     })
     toast({
       title: "Product successfully added to cart",
@@ -31,84 +69,6 @@ export default function ShopPage() {
       variant: "success",
     })
   }
-
-  const products = [
-    {
-      id: 1,
-      name: "Dark Elegance Truffle Box",
-      collection: "Dark Elegance",
-      price: 3749,
-      originalPrice: null,
-      image: "/dark-chocolate-collection-luxury-packaging.jpg",
-      rating: 4.9,
-      reviews: 127,
-      bestseller: true,
-      premium: false,
-      description: "12 handcrafted dark chocolate truffles with 70-90% cocoa content",
-    },
-    {
-      id: 2,
-      name: "Milk Harmony Selection",
-      collection: "Milk Harmony",
-      price: 3199,
-      originalPrice: 3499,
-      image: "/milk-chocolate-truffles-with-gold-accents.jpg",
-      rating: 4.8,
-      reviews: 89,
-      bestseller: false,
-      premium: false,
-      description: "8 premium milk chocolate pieces with smooth, creamy textures",
-    },
-    {
-      id: 3,
-      name: "White Luxury Bonbons",
-      collection: "White Luxury",
-      price: 3499,
-      originalPrice: null,
-      image: "/white-chocolate-bonbons-with-berry-decorations.jpg",
-      rating: 4.9,
-      reviews: 156,
-      bestseller: true,
-      description: "10 white chocolate bonbons infused with exotic flavors",
-    },
-    {
-      id: 4,
-      name: "Artisan Truffle Collection",
-      collection: "Artisan Truffles",
-      price: 4599,
-      originalPrice: null,
-      image: "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg",
-      rating: 5.0,
-      reviews: 203,
-      bestseller: true,
-      description: "15 unique handcrafted truffles with innovative flavor combinations",
-    },
-    {
-      id: 5,
-      name: "Dark Chocolate Bar Set",
-      collection: "Dark Elegance",
-      price: 2349,
-      originalPrice: 2699,
-      image: "/dark-chocolate-collection-luxury-packaging.jpg",
-      rating: 4.7,
-      reviews: 74,
-      bestseller: false,
-      description: "3 premium dark chocolate bars with different cocoa percentages",
-    },
-    {
-      id: 6,
-      name: "Seasonal Berry Collection",
-      collection: "White Luxury",
-      price: 3999,
-      originalPrice: null,
-      image: "/white-chocolate-bonbons-with-berry-decorations.jpg",
-      rating: 4.8,
-      reviews: 92,
-      bestseller: false,
-      premium: false,
-      description: "Limited edition white chocolates with seasonal berry infusions",
-    },
-  ]
 
   return (
     <div className="min-h-screen bg-[#fff5d6]">
@@ -179,6 +139,17 @@ export default function ShopPage() {
       {/* Products Grid */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20 text-primary">
+              <Loader2 className="h-10 w-10 animate-spin mb-4" />
+              <p className="text-gray-600">Loading products...</p>
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-xl font-serif font-bold text-primary mb-2">No products available</p>
+              <p className="text-gray-600">Products added from the admin dashboard will appear here.</p>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {products.map((product) => (
               <Card
@@ -282,17 +253,7 @@ export default function ShopPage() {
               </Card>
             ))}
           </div>
-
-          {/* Load More */}
-          <div className="text-center mt-12">
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-maroon-200 text-maroon-700 hover:bg-maroon-50 px-8 bg-transparent"
-            >
-              Load More Products
-            </Button>
-          </div>
+          )}
         </div>
       </section>
 

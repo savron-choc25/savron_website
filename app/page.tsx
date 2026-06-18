@@ -22,7 +22,6 @@ import {
 } from "lucide-react"
 import { useRef, useState, useEffect } from "react"
 import Link from "next/link"
-import { products as defaultProducts } from "@/data/products"
 
 export default function SavronHomepage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -39,66 +38,36 @@ export default function SavronHomepage() {
     try {
       setLoading(true)
       const response = await fetch('/api/products')
-      let adminProducts = []
-      
+
       if (response.ok) {
-        adminProducts = await response.json()
+        const adminProducts = await response.json()
+        setProducts(adminProducts)
       } else {
-        console.error('Failed to fetch admin products')
+        setProducts([])
       }
-
-      // Convert default products to match the database format
-      const convertedDefaultProducts = defaultProducts.map(product => ({
-        _id: `default-${product.id}`,
-        name: product.name,
-        price: product.price,
-        description: product.description,
-        category: product.category,
-        images: product.images,
-        inStock: product.inStock,
-        weight: "100g",
-        origin: "Belgium",
-        ingredients: product.ingredients,
-        allergens: ["Milk", "Soy"],
-        features: product.features || [],
-        badges: product.badges,
-        rating: product.rating,
-        reviews: product.reviews.length
-      }))
-
-      // Combine admin products with default products (newest first)
-      const allProducts = [...adminProducts, ...convertedDefaultProducts]
-      setProducts(allProducts)
     } catch (error) {
       console.error('Error fetching products:', error)
-      // If there's an error, still show default products
-      const convertedDefaultProducts = defaultProducts.map(product => ({
-        _id: `default-${product.id}`,
-        name: product.name,
-        price: product.price,
-        description: product.description,
-        category: product.category,
-        images: product.images,
-        inStock: product.inStock,
-        weight: "100g",
-        origin: "Belgium",
-        ingredients: product.ingredients,
-        allergens: ["Milk", "Soy"],
-        features: product.features || [],
-        badges: product.badges,
-        rating: product.rating,
-        reviews: product.reviews.length
-      }))
-      setProducts(convertedDefaultProducts)
+      setProducts([])
       toast({
-        title: "Warning",
-        description: "Showing default products only. Admin products unavailable.",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to load products.",
+        variant: "destructive",
       })
     } finally {
       setLoading(false)
     }
   }
+
+  const premiumProducts = products.filter((product) => product.premium)
+  const carouselProducts = products.map((product) => ({
+    id: product._id,
+    name: product.name,
+    description: product.description,
+    image: product.images?.[0] || "/placeholder.svg",
+    badge: product.premium ? "Premium" : "New",
+    features: product.features?.slice(0, 2).filter(Boolean) || [product.category],
+    isNewProduct: true,
+  }))
 
   const handleAddToCart = (product: any) => {
     cartUtils.addToCart(dispatch, {
@@ -246,98 +215,16 @@ export default function SavronHomepage() {
               className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-4 px-2 sm:px-0" 
               style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}
             >
-            {[
-              // Newly added non-premium products first
-              ...products.filter(product => !product.premium).map(product => ({
-                id: product._id || product.id,
-                name: product.name,
-                description: product.description,
-                image: product.images?.[0] || "/placeholder.svg",
-                price: `From ₹${product.price.toLocaleString('en-IN')}`,
-                badge: "New",
-                gradient: "from-green-600 to-emerald-600",
-                features: ["New Arrival", "Fresh"],
-                isNewProduct: true
-              })),
-              // Existing static collections - mapped to default product IDs
-              {
-                id: 1, // Maps to Premium Dark Chocolate Truffles Collection
-                name: "Dark Elegance",
-                description: "Rich 70% dark chocolate with exotic spices",
-                image: "/dark-chocolate-collection-luxury-packaging.jpg",
-                price: "From ₹3,749",
-                badge: "Bestseller",
-                gradient: "from-slate-900 to-primary",
-                features: ["Single Origin", "Award Winning"],
-                isNewProduct: false,
-              },
-              {
-                id: 2, // Maps to Artisan Milk Chocolate Collection
-                name: "Milk Harmony",
-                description: "Creamy milk chocolate with caramelized nuts",
-                image: "/milk-chocolate-truffles-with-gold-accents.jpg",
-                price: "From ₹3,199",
-                badge: "Classic",
-                gradient: "from-accent to-amber-600",
-                features: ["Premium Quality", "Handcrafted"],
-                isNewProduct: false,
-              },
-              {
-                id: 3, // Maps to White Chocolate Delights
-                name: "White Bliss",
-                description: "Premium white chocolate with berry infusions",
-                image: "/white-chocolate-bonbons-with-berry-decorations.jpg",
-                price: "From ₹3,499",
-                badge: "Limited",
-                gradient: "from-red-200 to-primary/50",
-                features: ["Artisan Made", "Exclusive"],
-                isNewProduct: false,
-              },
-              {
-                id: 4, // Maps to Gourmet Chocolate Bars Collection
-                name: "Espresso Delight",
-                description: "Dark chocolate infused with rich espresso",
-                image: "/dark-chocolate-collection-luxury-packaging.jpg",
-                price: "From ₹2,999",
-                badge: "Popular",
-                gradient: "from-amber-800 to-orange-600",
-                features: ["Coffee Infused", "Rich Flavor"],
-                isNewProduct: false,
-              },
-              {
-                id: 1, // Maps to Premium Dark Chocolate Truffles Collection
-                name: "Sea Salt Caramel",
-                description: "Smooth caramel with Himalayan sea salt",
-                image: "/milk-chocolate-truffles-with-gold-accents.jpg",
-                price: "From ₹3,299",
-                badge: "Classic",
-                gradient: "from-amber-400 to-yellow-500",
-                features: ["Sea Salt", "Smooth Caramel"],
-                isNewProduct: false,
-              },
-              {
-                id: 3, // Maps to White Chocolate Delights
-                name: "Raspberry Dream",
-                description: "White chocolate with fresh raspberry swirls",
-                image: "/white-chocolate-bonbons-with-berry-decorations.jpg",
-                price: "From ₹3,199",
-                badge: "Seasonal",
-                gradient: "from-pink-400 to-red-400",
-                features: ["Fresh Berries", "Seasonal"],
-                isNewProduct: false,
-              },
-              {
-                id: 2, // Maps to Artisan Milk Chocolate Collection
-                name: "Hazelnut Crunch",
-                description: "Milk chocolate with roasted hazelnuts",
-                image: "/luxury-chocolate-truffles-arranged-elegantly-on-ma.jpg",
-                price: "From ₹2,999",
-                badge: "Nutty",
-                gradient: "from-amber-600 to-brown-600",
-                features: ["Roasted Nuts", "Crunchy"],
-                isNewProduct: false,
-              },
-            ].map((collection, index) => (
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              </div>
+            ) : carouselProducts.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                No products yet. Add products from the admin dashboard to show them here.
+              </div>
+            ) : (
+            carouselProducts.map((collection, index) => (
               <Card
                 key={index}
                 className="group cursor-pointer overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-[#f7f1be] rounded-2xl p-0 flex-shrink-0 w-72 sm:w-80"
@@ -402,15 +289,15 @@ export default function SavronHomepage() {
                     className="w-full group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-accent group-hover:text-white group-hover:border-transparent transition-all duration-500 transform group-hover:scale-105 shadow-md hover:shadow-lg bg-transparent border-accent/40 text-accent hover:text-white font-semibold py-2 text-xs sm:text-sm"
                   >
                     <a href={`/view-details?id=${collection.id}`} className="text-inherit flex items-center justify-center">
-                      {collection.isNewProduct ? "View Product" : "View Collection"}
+                      View Product
                       <ChevronRight className="w-3 h-3 ml-1" />
                     </a>
                   </Button>
                 </CardContent>
               </Card>
-            ))}
+            ))
+            )}
             </div>
-          </div>
         </div>
       </section>
 
@@ -432,12 +319,13 @@ export default function SavronHomepage() {
                 
                 {/* Main Title */}
                 <h2 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
-                  {products.filter(product => product.premium)[0]?.name || "SAVRON"}
+                  {premiumProducts[0]?.name || "SAVRON"}
                   <span className="block text-yellow-300">PREMIUM</span>
                 </h2>
                 
                 {/* CTA Button */}
-                <Link href={`/view-details?id=${products.filter(product => product.premium)[0]?._id || products.filter(product => product.premium)[0]?.id || 'default-1'}`}>
+                {premiumProducts[0]?._id ? (
+                <Link href={`/view-details?id=${premiumProducts[0]._id}`}>
                   <Button 
                     size="lg" 
                     className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
@@ -446,6 +334,7 @@ export default function SavronHomepage() {
                     <ChevronRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
+                ) : null}
               </div>
             </div>
             
@@ -460,7 +349,7 @@ export default function SavronHomepage() {
                 <div className="relative">
                   {/* Premium Product Image */}
                   <img
-                    src={products.filter(product => product.premium)[0]?.images?.[0] || "/dark-chocolate-collection-luxury-packaging.jpg"}
+                    src={premiumProducts[0]?.images?.[0] || "/placeholder.svg"}
                     alt="Savron Premium Chocolate"
                     className="w-96 h-auto object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
                   />
@@ -503,7 +392,7 @@ export default function SavronHomepage() {
                 <div className="relative">
                   {/* Premium Product Image */}
                   <img
-                    src={products.filter(product => product.premium)[1]?.images?.[0] || "/dark-chocolate-collection-luxury-packaging.jpg"}
+                    src={premiumProducts[1]?.images?.[0] || "/placeholder.svg"}
                     alt="Savron Premium Chocolate"
                     className="w-96 h-auto object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
                   />
@@ -542,12 +431,13 @@ export default function SavronHomepage() {
                 
                 {/* Main Title */}
                 <h2 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
-                  {products.filter(product => product.premium)[1]?.name || "SAVRON"}
+                  {premiumProducts[1]?.name || "SAVRON"}
                   <span className="block text-yellow-300">PREMIUM</span>
                 </h2>
                 
                 {/* CTA Button */}
-                <Link href={`/view-details?id=${products.filter(product => product.premium)[1]?._id || products.filter(product => product.premium)[1]?.id || 'default-2'}`}>
+                {premiumProducts[1]?._id ? (
+                <Link href={`/view-details?id=${premiumProducts[1]._id}`}>
                   <Button 
                     size="lg" 
                     className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
@@ -556,6 +446,7 @@ export default function SavronHomepage() {
                     <ChevronRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
+                ) : null}
               </div>
             </div>
           </div>
@@ -580,12 +471,13 @@ export default function SavronHomepage() {
                 
                 {/* Main Title */}
                 <h2 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
-                  {products.filter(product => product.premium)[2]?.name || "SAVRON"}
+                  {premiumProducts[2]?.name || "SAVRON"}
                   <span className="block text-yellow-300">PREMIUM</span>
                 </h2>
                 
                 {/* CTA Button */}
-                <Link href={`/view-details?id=${products.filter(product => product.premium)[2]?._id || products.filter(product => product.premium)[2]?.id || 'default-3'}`}>
+                {premiumProducts[2]?._id ? (
+                <Link href={`/view-details?id=${premiumProducts[2]._id}`}>
                   <Button
                     size="lg"
                     className="bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
@@ -594,6 +486,7 @@ export default function SavronHomepage() {
                     <ChevronRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
+                ) : null}
               </div>
             </div>
             
@@ -608,7 +501,7 @@ export default function SavronHomepage() {
                 <div className="relative">
                   {/* Premium Product Image */}
                   <img
-                    src={products.filter(product => product.premium)[2]?.images?.[0] || "/dark-chocolate-collection-luxury-packaging.jpg"}
+                    src={premiumProducts[2]?.images?.[0] || "/placeholder.svg"}
                     alt="Savron Premium Chocolate"
                     className="w-96 h-auto object-cover rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
                   />
