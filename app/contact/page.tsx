@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { MapPin, Phone, Mail, Clock, Send, ExternalLink, Globe, Factory } from "lucide-react"
+import { MapPin, Phone, Mail, Clock, Send, ExternalLink, Factory } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 
@@ -17,10 +17,13 @@ const STORE_LOCATION = {
   ],
   fullAddress:
     "Unit No.1, Shri Krishna Vrindavan Apt, Beside RJ Thakur College, Swarakar Nagar, Thane, Mumbai – 400606",
+  // Map pin uses building location (no unit number) + exact coordinates beside RJ Thakur College
+  latitude: 19.2053,
+  longitude: 72.9548,
   mapsShareUrl:
-    "https://www.google.com/maps/search/?api=1&query=Unit+No.1,+Shri+Krishna+Vrindavan+Apt,+Beside+RJ+Thakur+College,+Swarakar+Nagar,+Thane,+Mumbai+400606",
+    "https://www.google.com/maps/search/?api=1&query=Savron+Chocolate+Co.@19.2053,72.9548",
   mapsEmbedUrl:
-    "https://maps.google.com/maps?q=Unit+No.1,+Shri+Krishna+Vrindavan+Apt,+Beside+RJ+Thakur+College,+Swarakar+Nagar,+Thane,+Mumbai+400606,+India&hl=en&z=16&output=embed",
+    "https://maps.google.com/maps?q=Savron+Chocolate+Co.@19.2053,72.9548&z=17&hl=en&output=embed",
 }
 
 export default function ContactPage() {
@@ -45,12 +48,6 @@ export default function ContactPage() {
       icon: <Mail className="h-5 w-5" />,
       title: "Email Us",
       details: ["savron1785@gmail.com"],
-    },
-    {
-      icon: <Globe className="h-5 w-5" />,
-      title: "Website",
-      details: ["www.savron.co"],
-      link: "https://www.savron.co",
     },
     {
       icon: <Clock className="h-5 w-5" />,

@@ -11,17 +11,17 @@ export default function Navbar() {
   const pathname = usePathname()
   const { state } = useCart()
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-20 bg-primary/90 backdrop-blur-md border-b border-primary/20">
+    <nav className="fixed top-0 left-0 right-0 z-50 h-20 bg-primary border-b border-primary/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
-          <Link href="/" className="flex items-center group">
-            <div className="relative w-120 h-34  transition-all duration-300 -ml-28 -mt-2 -mb-1">
+          <Link href="/" className="flex items-center group shrink-0">
+            <div className="relative w-44 sm:w-56 md:w-64 lg:w-72 h-14 sm:h-16 md:h-[4.5rem] transition-all duration-300">
               <Image
-                src="/savron_logo22.png"
-                alt="Savron Chocolate Logo"
+                src="/logo/savron-premium-logo.png"
+                alt="Savron Premium Luxury Chocolate"
                 fill
-                className="object-contain"
+                className="object-contain object-left"
                 priority
               />
             </div>

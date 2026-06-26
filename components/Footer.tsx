@@ -14,17 +14,17 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-12">
           <div className="space-y-4">
             <div className="flex items-center">
-              <div className="relative w-100 h-80 -mt-28 -ml-6">
+              <div className="relative w-44 sm:w-52 h-16 sm:h-20">
                 <Image
-                  src="/savron_logo22.png"
-                  alt="Savron Chocolate Logo"
+                  src="/logo/savron-premium-logo.png"
+                  alt="Savron Premium Luxury Chocolate"
                   fill
-                  className="object-contain"
+                  className="object-contain object-left"
                   priority
                 />
               </div>
             </div>
-            <p className="text-base opacity-90 text-pretty leading-relaxed font-light -mt-18">
+            <p className="text-base opacity-90 text-pretty leading-relaxed font-light mt-2">
               Crafting exceptional chocolates since 1952. Experience luxury in every bite of our artisan creations.
             </p>
             <div className="flex space-x-6">
@@ -77,16 +77,6 @@ export default function Footer() {
               <li>
                 <Link href="/about" className="hover:text-accent transition-colors duration-300 font-light">
                   Our Story
-                </Link>
-              </li>
-              <li>
-                <Link href="/careers" className="hover:text-accent transition-colors duration-300 font-light">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link href="/press" className="hover:text-accent transition-colors duration-300 font-light">
-                  Press
                 </Link>
               </li>
             </ul>

@@ -6,6 +6,7 @@ import { Suspense } from "react"
 import { CartProvider } from "@/contexts/CartContext"
 import { ToastProvider } from "@/contexts/ToastContext"
 import { Toaster } from "@/components/ui/simple-toaster"
+import FloatingContactButtons from "@/components/FloatingContactButtons"
 import "./globals.css"
 
 const spaceGrotesk = Space_Grotesk({
@@ -40,6 +41,7 @@ export default function RootLayout({
         <CartProvider>
           <ToastProvider>
             <Suspense fallback={null}>{children}</Suspense>
+            <FloatingContactButtons />
             <Toaster />
           </ToastProvider>
         </CartProvider>

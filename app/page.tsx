@@ -102,6 +102,98 @@ export default function SavronHomepage() {
       })
     }
   }
+
+  const renderCarouselContent = () => {
+    if (loading) {
+      return (
+        <div className="flex w-full justify-center py-12">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        </div>
+      )
+    }
+
+    if (carouselProducts.length === 0) {
+      return (
+        <div className="w-full text-center py-12 text-muted-foreground">
+          No products yet. Add products from the admin dashboard to show them here.
+        </div>
+      )
+    }
+
+    return carouselProducts.map((collection) => (
+      <Card
+        key={collection.id}
+        className="group cursor-pointer overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-[#f7f1be] rounded-2xl p-0 py-0 gap-0 flex-shrink-0 w-72 sm:w-80"
+      >
+        <div className="h-44 sm:h-48 overflow-hidden relative bg-white flex items-center justify-center p-3">
+          <img
+            src={getOptimizedImageUrl(collection.image || "/placeholder.svg", {
+              width: 800,
+              height: 800,
+              fit: 'contain',
+            })}
+            alt={collection.name}
+            className="max-w-full max-h-full object-contain"
+          />
+
+          <div className="absolute top-2 left-2">
+            <Badge
+              variant={collection.badge === "Bestseller" ? "default" : "secondary"}
+              className={
+                collection.badge === "Bestseller"
+                  ? "bg-gradient-to-r from-primary to-red-800 text-white shadow-xl font-semibold px-2 py-0.5 text-xs"
+                  : collection.badge === "New" && collection.isNewProduct
+                  ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-xl font-semibold px-2 py-0.5 text-xs"
+                  : collection.badge === "New"
+                  ? "bg-gradient-to-r from-accent to-amber-600 text-white shadow-xl font-semibold px-2 py-0.5 text-xs"
+                  : "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl font-semibold px-2 py-0.5 text-xs"
+              }
+            >
+              {collection.badge === "New" && <Zap className="w-3 h-3 mr-1" />}
+              {collection.badge === "Bestseller" && <Crown className="w-3 h-3 mr-1" />}
+              {collection.badge === "Limited" && <Sparkles className="w-3 h-3 mr-1" />}
+              {collection.badge}
+            </Badge>
+          </div>
+        </div>
+
+        <CardContent className="p-3 sm:p-4 pt-3 pb-4">
+          <h3 className="text-base font-serif font-bold mb-1.5 line-clamp-1 group-hover:text-primary transition-colors">
+            {collection.name}
+          </h3>
+          <p className="text-muted-foreground text-xs sm:text-sm mb-2 leading-snug line-clamp-2">
+            {collection.description}
+          </p>
+
+          {collection.features.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-2.5">
+              {collection.features.map((feature, idx) => (
+                <Badge
+                  key={idx}
+                  variant="outline"
+                  className="text-xs border-accent/30 text-accent bg-accent/5 px-1.5 py-0"
+                >
+                  {feature}
+                </Badge>
+              ))}
+            </div>
+          )}
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full h-8 group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-accent group-hover:text-white group-hover:border-transparent transition-all duration-300 bg-transparent border-accent/40 text-accent hover:text-white font-semibold text-xs"
+          >
+            <a href={`/view-details?id=${collection.id}`} className="text-inherit flex items-center justify-center">
+              View Product
+              <ChevronRight className="w-3 h-3 ml-1" />
+            </a>
+          </Button>
+        </CardContent>
+      </Card>
+    ))
+  }
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -212,92 +304,12 @@ export default function SavronHomepage() {
             {/* Horizontal Scrollable Container */}
             <div 
               ref={scrollContainerRef}
-              className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-4 px-2 sm:px-0" 
+              className="flex items-start gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-4 px-2 sm:px-0" 
               style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}
             >
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <Loader2 className="h-10 w-10 animate-spin text-primary" />
-              </div>
-            ) : carouselProducts.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                No products yet. Add products from the admin dashboard to show them here.
-              </div>
-            ) : (
-            carouselProducts.map((collection, index) => (
-              <Card
-                key={index}
-                className="group cursor-pointer overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-[#f7f1be] rounded-2xl p-0 flex-shrink-0 w-72 sm:w-80"
-              >
-                <div className="aspect-square overflow-hidden relative bg-gray-50 flex items-center justify-center p-4">
-                  <img
-                    src={getOptimizedImageUrl(collection.image || "/placeholder.svg", {
-                      width: 800,
-                      height: 800,
-                      fit: 'contain',
-                    })}
-                    alt={collection.name}
-                    className="max-w-full max-h-full object-contain"
-                  />
-                  
-                  {/* Product Badge */}
-                  <div className="absolute top-2 left-2">
-                    <Badge
-                      variant={collection.badge === "Bestseller" ? "default" : "secondary"}
-                      className={
-                        collection.badge === "Bestseller"
-                          ? "bg-gradient-to-r from-primary to-red-800 text-white shadow-xl font-semibold px-3 py-1"
-                          : collection.badge === "New" && collection.isNewProduct
-                          ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-xl font-semibold px-3 py-1"
-                          : collection.badge === "New"
-                          ? "bg-gradient-to-r from-accent to-amber-600 text-white shadow-xl font-semibold px-3 py-1"
-                          : "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-xl font-semibold px-3 py-1"
-                      }
-                    >
-                      {collection.badge === "New" && <Zap className="w-3 h-3 mr-1" />}
-                      {collection.badge === "Bestseller" && <Crown className="w-3 h-3 mr-1" />}
-                      {collection.badge === "Limited" && <Sparkles className="w-3 h-3 mr-1" />}
-                      {collection.badge}
-                    </Badge>
-                  </div>
-                  
-                </div>
-                
-                <CardContent className="p-3 sm:p-4 relative mt-0">
-                  <h3 className="text-base sm:text-lg font-serif font-bold mb-2 group-hover:text-primary transition-colors">
-                    {collection.name}
-                  </h3>
-                  <p className="text-muted-foreground text-xs sm:text-sm mb-3 leading-relaxed font-light">
-                    {collection.description}
-                  </p>
-                  
-                  {/* Features */}
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {collection.features.map((feature, idx) => (
-                      <Badge
-                        key={idx}
-                        variant="outline"
-                        className="text-xs border-accent/30 text-accent bg-accent/5 px-1.5 sm:px-2 py-0.5 sm:py-1"
-                      >
-                        {feature}
-                      </Badge>
-                    ))}
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    className="w-full group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-accent group-hover:text-white group-hover:border-transparent transition-all duration-500 transform group-hover:scale-105 shadow-md hover:shadow-lg bg-transparent border-accent/40 text-accent hover:text-white font-semibold py-2 text-xs sm:text-sm"
-                  >
-                    <a href={`/view-details?id=${collection.id}`} className="text-inherit flex items-center justify-center">
-                      View Product
-                      <ChevronRight className="w-3 h-3 ml-1" />
-                    </a>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))
-            )}
+              {renderCarouselContent()}
             </div>
+          </div>
         </div>
       </section>
 
