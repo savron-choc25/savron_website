@@ -16,15 +16,14 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
           <Link href="/" className="flex items-center group shrink-0">
-            <div className="relative w-44 sm:w-56 md:w-64 lg:w-72 h-14 sm:h-16 md:h-[4.5rem] transition-all duration-300">
-              <Image
-                src="/logo/savron-premium-logo.png"
-                alt="Savron Premium Luxury Chocolate"
-                fill
-                className="object-contain object-left"
-                priority
-              />
-            </div>
+            <Image
+              src="/logo/savron-premium-logo.png"
+              alt="Savron Premium Luxury Chocolate"
+              width={360}
+              height={90}
+              className="h-14 sm:h-16 md:h-[4.5rem] w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Centered Navigation Links */}

@@ -14,15 +14,14 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-12">
           <div className="space-y-4">
             <div className="flex items-center">
-              <div className="relative w-44 sm:w-52 h-16 sm:h-20">
-                <Image
-                  src="/logo/savron-premium-logo.png"
-                  alt="Savron Premium Luxury Chocolate"
-                  fill
-                  className="object-contain object-left"
-                  priority
-                />
-              </div>
+              <Image
+                src="/logo/savron-premium-logo.png"
+                alt="Savron Premium Luxury Chocolate"
+                width={260}
+                height={80}
+                className="h-16 sm:h-20 w-auto object-contain"
+                priority
+              />
             </div>
             <p className="text-base opacity-90 text-pretty leading-relaxed font-light mt-2">
               Crafting exceptional chocolates since 1952. Experience luxury in every bite of our artisan creations.
