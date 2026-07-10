@@ -112,8 +112,14 @@ export default function Footer() {
           <p className="text-sm opacity-70 font-light">
             © 2025 Savron Chocolates. All Rights Reserved.
           </p>
-          <p className="text-xs opacity-60 font-light mt-2">
-            Privacy Policy | Terms of Service
+          <p className="text-xs opacity-60 font-light mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1">
+            <Link href="/privacy" className="hover:text-accent transition-colors">Privacy Policy</Link>
+            <span>|</span>
+            <Link href="/terms" className="hover:text-accent transition-colors">Terms of Service</Link>
+            <span>|</span>
+            <Link href="/returns" className="hover:text-accent transition-colors">Refund Policy</Link>
+            <span>|</span>
+            <Link href="/shipping-info" className="hover:text-accent transition-colors">Shipping Info</Link>
           </p>
         </div>
       </div>

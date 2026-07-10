@@ -1,312 +1,201 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import Navbar from "@/components/Navbar"
-import { useCart } from "@/contexts/CartContext"
-import { 
-  CheckCircle, 
-  Package, 
-  Truck, 
-  Mail, 
-  Download,
-  Share2,
-  Heart,
-  Star,
-  Clock,
-  MapPin,
-  CreditCard,
-  Gift,
-  Phone
-} from "lucide-react"
+import Footer from "@/components/Footer"
+import { CheckCircle, Package, MapPin, CreditCard } from "lucide-react"
+
+interface OrderData {
+  orderId: string
+  orderNumber: string
+  items: { id: number; name: string; price: number; quantity: number; image: string }[]
+  customer: {
+    firstName: string
+    lastName: string
+    email: string
+    phone: string
+    address: string
+    apartment?: string
+    city: string
+    state: string
+    pincode: string
+  }
+  shipping: { method: string; estimatedDays: string }
+  totals: { subtotal: number; shipping: number; giftWrap: number; gst: number; total: number }
+  payment: { method: string; paymentId: string; amount: number }
+  orderDate: string
+}
 
 export default function OrderConfirmationPage() {
-  const { state } = useCart()
-  
-  const [orderData] = useState({
-    orderNumber: "SAV-2024-001234",
-    orderDate: new Date().toLocaleDateString(),
-    estimatedDelivery: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-    status: "confirmed",
-    total: state.total + 8.99 + (state.total * 0.08),
-    items: state.items,
-    shipping: {
-      method: "Standard Shipping",
-      address: "123 Main Street, Apt 4B, New York, NY 10001",
-      trackingNumber: "1Z999AA1234567890"
-    },
-    payment: {
-      method: "Credit Card ending in 1234",
-      amount: 124.47
-    }
-  })
+  const [orderData, setOrderData] = useState<OrderData | null>(null)
 
-  const [showTracking, setShowTracking] = useState(false)
+  useEffect(() => {
+    const stored = sessionStorage.getItem("savron_last_order")
+    if (stored) {
+      try {
+        setOrderData(JSON.parse(stored))
+      } catch {
+        setOrderData(null)
+      }
+    }
+  }, [])
+
+  if (!orderData) {
+    return (
+      <div className="min-h-screen bg-[#fff5d6]">
+        <Navbar />
+        <div className="container mx-auto px-4 py-32 text-center">
+          <h1 className="text-3xl font-serif font-bold text-primary mb-4">No Order Found</h1>
+          <p className="text-gray-600 mb-8">If you just placed an order, please check your email for confirmation.</p>
+          <Link href="/shop">
+            <Button className="bg-gradient-to-r from-accent to-amber-500 text-white">Continue Shopping</Button>
+          </Link>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  const deliveryAddress = [
+    orderData.customer.address,
+    orderData.customer.apartment,
+    `${orderData.customer.city}, ${orderData.customer.state} ${orderData.customer.pincode}`,
+    "India",
+  ]
+    .filter(Boolean)
+    .join(", ")
 
   return (
     <div className="min-h-screen bg-[#fff5d6]">
       <Navbar />
-      
-      {/* Success Hero Section */}
+
       <section className="pt-24 pb-12 bg-gradient-to-br from-green-600 via-green-500 to-emerald-500">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
-              <CheckCircle className="w-12 h-12 text-green-600" />
-            </div>
-            <h1 className="text-4xl lg:text-6xl font-serif font-bold text-white mb-4">
-              Order Confirmed!
-            </h1>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto mb-6">
-              Thank you for your order. Your premium chocolates are being prepared with care.
-            </p>
-            <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 max-w-md mx-auto">
-              <p className="text-white font-semibold text-lg">Order #{orderData.orderNumber}</p>
-              <p className="text-white/80">Placed on {orderData.orderDate}</p>
-            </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
+            <CheckCircle className="w-12 h-12 text-green-600" />
+          </div>
+          <h1 className="text-4xl lg:text-6xl font-serif font-bold text-white mb-4">Order Confirmed!</h1>
+          <p className="text-xl text-white/90 max-w-2xl mx-auto mb-6">
+            Thank you for your order. Your premium chocolates are being prepared with care.
+          </p>
+          <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 max-w-md mx-auto">
+            <p className="text-white font-semibold text-lg">Order #{orderData.orderNumber}</p>
+            <p className="text-white/80">Placed on {orderData.orderDate}</p>
           </div>
         </div>
       </section>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Order Details */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Order Status */}
-            <Card className="bg-[#f7f1be] border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle className="text-2xl font-serif font-bold text-primary flex items-center gap-3">
-                  <Package className="w-6 h-6" />
-                  Order Status
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {/* Status Timeline */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-primary">Order Confirmed</h4>
-                        <p className="text-sm text-primary/70">Your order has been received and confirmed</p>
-                      </div>
-                      <Badge className="bg-green-100 text-green-800">Completed</Badge>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
-                        <Package className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-primary">Preparing Your Order</h4>
-                        <p className="text-sm text-primary/70">Our chocolatiers are crafting your premium chocolates</p>
-                      </div>
-                      <Badge className="bg-amber-100 text-amber-800">In Progress</Badge>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                        <Truck className="w-5 h-5 text-gray-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-primary">Shipped</h4>
-                        <p className="text-sm text-primary/70">Your order is on its way to you</p>
-                      </div>
-                      <Badge variant="outline">Pending</Badge>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                        <CheckCircle className="w-5 h-5 text-gray-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-primary">Delivered</h4>
-                        <p className="text-sm text-primary/70">Estimated delivery: {orderData.estimatedDelivery}</p>
-                      </div>
-                      <Badge variant="outline">Pending</Badge>
-                    </div>
+        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <Card className="bg-[#f7f1be] border-0 shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-xl font-serif font-bold text-primary flex items-center gap-2">
+                <Package className="w-5 h-5" />
+                Order Items
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {orderData.items.map((item) => (
+                <div key={item.id} className="flex gap-3">
+                  <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-primary text-sm">{item.name}</p>
+                    <p className="text-primary/70 text-sm">Qty: {item.quantity}</p>
+                    <p className="font-bold text-primary text-sm">
+                      ₹{(item.price * item.quantity).toLocaleString("en-IN")}
+                    </p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Order Items */}
-            <Card className="bg-[#f7f1be] border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle className="text-2xl font-serif font-bold text-primary">
-                  Order Items
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {orderData.items.map((item) => (
-                  <div key={item.id} className="flex gap-4 p-4 bg-white/50 rounded-xl">
-                    <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-primary text-lg">{item.name}</h4>
-                      <p className="text-primary/70 text-sm mb-2">{item.description}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-primary/70">Quantity: {item.quantity}</span>
-                        <span className="font-bold text-primary text-lg">
-                          ₹{(item.price * item.quantity).toLocaleString('en-IN')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Shipping Information */}
-            <Card className="bg-[#f7f1be] border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle className="text-2xl font-serif font-bold text-primary flex items-center gap-3">
-                  <MapPin className="w-6 h-6" />
-                  Shipping Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-semibold text-primary mb-2">Shipping Method</h4>
-                    <p className="text-primary/70">{orderData.shipping.method}</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-primary mb-2">Estimated Delivery</h4>
-                    <p className="text-primary/70">{orderData.estimatedDelivery}</p>
-                  </div>
+              ))}
+              <div className="pt-4 border-t border-primary/20 space-y-2 text-primary text-sm">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>₹{orderData.totals.subtotal.toLocaleString("en-IN")}</span>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-primary mb-2">Shipping Address</h4>
-                  <p className="text-primary/70">{orderData.shipping.address}</p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-primary mb-2">Tracking Number</h4>
-                  <div className="flex items-center gap-3">
-                    <code className="bg-white/50 px-3 py-1 rounded text-primary font-mono">
-                      {orderData.shipping.trackingNumber}
-                    </code>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setShowTracking(!showTracking)}
-                      className="border-primary/20 text-primary hover:bg-primary/10"
-                    >
-                      Track Package
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <Link href="/collections">
-                <Button className="bg-gradient-to-r from-accent to-amber-500 hover:from-accent/90 hover:to-amber-500/90 text-white">
-                  <span className="flex items-center justify-center">
-                    Continue Shopping
+                <div className="flex justify-between">
+                  <span>Shipping</span>
+                  <span>
+                    {orderData.totals.shipping === 0
+                      ? "Free"
+                      : `₹${orderData.totals.shipping.toLocaleString("en-IN")}`}
                   </span>
-                </Button>
-              </Link>
-              <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/10">
-                <Download className="w-4 h-4 mr-2" />
-                Download Receipt
-              </Button>
-            </div>
-          </div>
+                </div>
+                {orderData.totals.giftWrap > 0 && (
+                  <div className="flex justify-between">
+                    <span>Gift Wrapping</span>
+                    <span>₹{orderData.totals.giftWrap.toLocaleString("en-IN")}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span>GST</span>
+                  <span>₹{orderData.totals.gst.toLocaleString("en-IN")}</span>
+                </div>
+                <div className="flex justify-between font-bold text-base pt-2 border-t border-primary/20">
+                  <span>Total Paid</span>
+                  <span>₹{orderData.totals.total.toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Order Summary Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Order Summary */}
+          <div className="space-y-6">
             <Card className="bg-[#f7f1be] border-0 shadow-xl">
               <CardHeader>
-                <CardTitle className="text-2xl font-serif font-bold text-primary">
-                  Order Summary
+                <CardTitle className="text-xl font-serif font-bold text-primary flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
+                  Delivery Details
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-primary">
-                    <span>Subtotal</span>
-                    <span>₹{(orderData.total - 749 - (orderData.total * 0.08)).toLocaleString('en-IN')}</span>
-                  </div>
-                  <div className="flex justify-between text-primary">
-                    <span>Shipping</span>
-                    <span>₹749</span>
-                  </div>
-                  <div className="flex justify-between text-primary">
-                    <span>Tax</span>
-                    <span>₹{(orderData.total * 0.08).toLocaleString('en-IN')}</span>
-                  </div>
-                  <div className="flex justify-between text-lg font-bold text-primary pt-2 border-t border-primary/20">
-                    <span>Total</span>
-                    <span>₹{orderData.total.toLocaleString('en-IN')}</span>
-                  </div>
-                </div>
+              <CardContent className="text-primary/80 text-sm space-y-2">
+                <p className="font-semibold text-primary">
+                  {orderData.customer.firstName} {orderData.customer.lastName}
+                </p>
+                <p>{deliveryAddress}</p>
+                <p>Phone: {orderData.customer.phone}</p>
+                <p>Email: {orderData.customer.email}</p>
+                <p className="pt-2">
+                  <span className="font-medium text-primary">Delivery:</span> {orderData.shipping.method} (
+                  {orderData.shipping.estimatedDays})
+                </p>
               </CardContent>
             </Card>
 
-            {/* Payment Information */}
             <Card className="bg-[#f7f1be] border-0 shadow-xl">
               <CardHeader>
-                <CardTitle className="text-xl font-serif font-bold text-primary flex items-center gap-3">
+                <CardTitle className="text-xl font-serif font-bold text-primary flex items-center gap-2">
                   <CreditCard className="w-5 h-5" />
                   Payment
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-primary/70">{orderData.payment.method}</p>
-                <p className="font-semibold text-primary mt-2">₹{orderData.payment.amount.toLocaleString('en-IN')}</p>
+              <CardContent className="text-primary/80 text-sm space-y-1">
+                <p>
+                  <span className="font-medium text-primary">Method:</span> {orderData.payment.method}
+                </p>
+                <p>
+                  <span className="font-medium text-primary">Payment ID:</span> {orderData.payment.paymentId}
+                </p>
+                <p>
+                  <span className="font-medium text-primary">Amount:</span> ₹
+                  {orderData.payment.amount.toLocaleString("en-IN")}
+                </p>
               </CardContent>
             </Card>
 
-            {/* Customer Support */}
-            <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-0 shadow-xl">
-              <CardContent className="p-6">
-                <h4 className="font-semibold text-primary mb-3">Need Help?</h4>
-                <p className="text-primary/70 text-sm mb-4">
-                  Our customer service team is here to help with any questions about your order.
-                </p>
-                <div className="space-y-2">
-                  <Button variant="outline" size="sm" className="w-full border-primary/20 text-primary hover:bg-primary/10">
-                    <Mail className="w-4 h-4 mr-2" />
-                    Contact Support
-                  </Button>
-                  <Button variant="outline" size="sm" className="w-full border-primary/20 text-primary hover:bg-primary/10">
-                    <Phone className="w-4 h-4 mr-2" />
-                    Call Us
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Review Request */}
-            <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200">
-              <CardContent className="p-6 text-center">
-                <Star className="w-8 h-8 text-amber-500 mx-auto mb-3" />
-                <h4 className="font-semibold text-primary mb-2">Love Your Chocolates?</h4>
-                <p className="text-primary/70 text-sm mb-4">
-                  Share your experience and help others discover our premium chocolates.
-                </p>
-                <Button className="bg-amber-500 hover:bg-amber-600 text-white">
-                  <Star className="w-4 h-4 mr-2" />
-                  Write a Review
-                </Button>
-              </CardContent>
-            </Card>
+            <Link href="/shop">
+              <Button className="w-full bg-gradient-to-r from-accent to-amber-500 hover:from-accent/90 hover:to-amber-500/90 text-white">
+                Continue Shopping
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }

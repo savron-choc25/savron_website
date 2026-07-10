@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,20 +8,31 @@ import { Input } from "@/components/ui/input"
 import Navbar from "@/components/Navbar"
 import { useCart, cartUtils } from "@/contexts/CartContext"
 import Link from "next/link"
-import { 
-  Minus, 
-  Plus, 
-  Trash2, 
-  ShoppingBag, 
-  ArrowRight, 
+import {
+  Minus,
+  Plus,
+  Trash2,
+  ShoppingBag,
+  ArrowRight,
   Truck,
   Shield,
-  RotateCcw
+  RotateCcw,
 } from "lucide-react"
+import type { StoreSettings } from "@/lib/store-settings.shared"
+import { DEFAULT_STORE_SETTINGS } from "@/lib/store-settings.shared"
+import { calculateOrderTotals } from "@/lib/calculate-order-totals"
 
 export default function CartPage() {
   const { state, dispatch } = useCart()
   const cartItems = state.items
+  const [storeSettings, setStoreSettings] = useState<StoreSettings>(DEFAULT_STORE_SETTINGS)
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data: StoreSettings) => setStoreSettings(data))
+      .catch(() => setStoreSettings(DEFAULT_STORE_SETTINGS))
+  }, [])
 
   const updateQuantity = (id: number, newQuantity: number) => {
     if (newQuantity < 1) return
@@ -33,9 +44,8 @@ export default function CartPage() {
   }
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-  const shipping = subtotal > 50 ? 0 : 8.99
-  const tax = subtotal * 0.08
-  const total = subtotal + shipping + tax
+  const firstShippingId = storeSettings.deliveryMethods.find((m) => m.enabled)?.id || "standard"
+  const { shipping, gst, total } = calculateOrderTotals(subtotal, firstShippingId, false, storeSettings)
 
   return (
     <div className="min-h-screen bg-[#fff5d6]">
@@ -195,8 +205,8 @@ export default function CartPage() {
                     <span>{shipping === 0 ? 'Free' : `₹${shipping.toLocaleString('en-IN')}`}</span>
                   </div>
                   <div className="flex justify-between text-primary">
-                    <span>Tax</span>
-                    <span>₹{tax.toLocaleString('en-IN')}</span>
+                    <span>GST ({storeSettings.gstPercentage}%)</span>
+                    <span>₹{gst.toLocaleString("en-IN")}</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold text-primary pt-2 border-t border-primary/20">
                     <span>Total</span>
@@ -208,15 +218,15 @@ export default function CartPage() {
                 <div className="space-y-3 pt-4">
                   <div className="flex items-center gap-3 text-sm text-primary/70">
                     <Truck className="w-4 h-4" />
-                    <span>Free shipping on orders over ₹4,199</span>
+                    <span>Free shipping on orders over ₹{storeSettings.freeShippingMin.toLocaleString("en-IN")}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-primary/70">
                     <Shield className="w-4 h-4" />
-                    <span>Secure checkout guaranteed</span>
+                    <span>Secured by Razorpay</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-primary/70">
                     <RotateCcw className="w-4 h-4" />
-                    <span>30-day return policy</span>
+                    <span>7-day return policy</span>
                   </div>
                 </div>
 

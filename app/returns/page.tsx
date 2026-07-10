@@ -12,6 +12,12 @@ export default function ReturnsPage() {
     "Eligible returns may receive a full refund or replacement, depending on the situation.",
   ]
 
+  const cancellationPoints = [
+    "Orders can be cancelled before dispatch by calling us or emailing with your order number.",
+    "If payment was made online, eligible cancellations receive a full refund within 5–7 business days via the original payment method.",
+    "Once shipped, orders cannot be cancelled — please refer to our returns process instead.",
+  ]
+
   return (
     <div className="min-h-screen bg-[#fff5d6]">
       <Navbar />
@@ -62,6 +68,20 @@ export default function ReturnsPage() {
                   </li>
                 ))}
               </ol>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <h2 className="text-xl font-semibold text-maroon-800 mb-4">Cancellation Policy</h2>
+              <ul className="space-y-3">
+                {cancellationPoints.map((point, index) => (
+                  <li key={index} className="flex gap-3 text-gray-600 leading-relaxed">
+                    <span className="font-semibold text-accent shrink-0">•</span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
             </CardContent>
           </Card>
 

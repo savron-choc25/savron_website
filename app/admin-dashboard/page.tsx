@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -24,15 +23,15 @@ import {
   Save,
   X,
   Search,
-  Filter,
-  BarChart3,
-  TrendingUp,
-  Users,
-  ShoppingCart,
   Loader2,
   FileImage,
-  FileVideo
+  FileVideo,
+  Settings,
+  ShoppingBag,
+  LogOut,
 } from "lucide-react"
+import StoreSettingsPanel from "@/components/admin/StoreSettingsPanel"
+import OrdersPanel from "@/components/admin/OrdersPanel"
 
 interface UploadedMedia {
   url: string
@@ -61,7 +60,7 @@ interface Product {
 export default function AdminDashboard() {
   const { toast } = useToast()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState("add-product")
+  const [activeTab, setActiveTab] = useState("orders")
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [products, setProducts] = useState<Product[]>([])
@@ -566,7 +565,7 @@ export default function AdminDashboard() {
               Admin Dashboard
             </h1>
             <p className="text-lg text-gray-600">
-              Manage your chocolate products and track inventory
+              Manage orders, products, and store settings
             </p>
           </div>
           <Button 
@@ -574,76 +573,66 @@ export default function AdminDashboard() {
             variant="outline"
             className="text-red-600 hover:text-red-700 hover:bg-red-50"
           >
+            <LogOut className="h-4 w-4 mr-2" />
             Logout
           </Button>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Products</p>
-                  <p className="text-2xl font-bold text-primary">{products.length}</p>
-                </div>
-                <Package className="h-8 w-8 text-primary" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">In Stock</p>
-                  <p className="text-2xl font-bold text-green-600">{products.filter(p => p.inStock).length}</p>
-                </div>
-                <TrendingUp className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Categories</p>
-                  <p className="text-2xl font-bold text-blue-600">{new Set(products.map(p => p.category)).size}</p>
-                </div>
-                <BarChart3 className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Avg. Price</p>
-                  <p className="text-2xl font-bold text-purple-600">₹{(products.reduce((sum, p) => sum + p.price, 0) / products.length).toFixed(0)}</p>
-                </div>
-                <ShoppingCart className="h-8 w-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar */}
+          <aside className="lg:w-64 shrink-0">
+            <Card className="bg-white/90 backdrop-blur-sm sticky top-24">
+              <CardContent className="p-3 space-y-1">
+                {[
+                  { id: "orders", label: "Orders", icon: ShoppingBag },
+                  { id: "add-product", label: "Add Product", icon: Plus },
+                  { id: "products", label: "Manage Products", icon: Package },
+                  { id: "settings", label: "Settings", icon: Settings },
+                ].map((item) => {
+                  const Icon = item.icon
+                  const isActive = activeTab === item.id
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setActiveTab(item.id)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                        isActive
+                          ? "bg-primary text-white"
+                          : "text-gray-700 hover:bg-primary/10 hover:text-primary"
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {item.label}
+                    </button>
+                  )
+                })}
+              </CardContent>
+            </Card>
 
-        {/* Main Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="add-product" className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add Product
-            </TabsTrigger>
-            <TabsTrigger value="products" className="flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              Manage Products
-            </TabsTrigger>
-          </TabsList>
+            {(activeTab === "add-product" || activeTab === "products") && (
+              <div className="grid grid-cols-2 gap-3 mt-4">
+                <Card className="bg-white/80">
+                  <CardContent className="p-3">
+                    <p className="text-xs text-gray-600">Products</p>
+                    <p className="text-lg font-bold text-primary">{products.length}</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/80">
+                  <CardContent className="p-3">
+                    <p className="text-xs text-gray-600">In Stock</p>
+                    <p className="text-lg font-bold text-green-600">{products.filter(p => p.inStock).length}</p>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </aside>
 
-          {/* Add Product Tab */}
-          <TabsContent value="add-product">
+          {/* Main Content */}
+          <div className="flex-1 min-w-0 space-y-6">
+          {activeTab === "orders" && <OrdersPanel />}
+
+          {activeTab === "add-product" && (
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1015,10 +1004,9 @@ export default function AdminDashboard() {
                 </form>
               </CardContent>
             </Card>
-          </TabsContent>
+          )}
 
-          {/* Products Management Tab */}
-          <TabsContent value="products">
+          {activeTab === "products" && (
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1112,8 +1100,11 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          )}
+
+          {activeTab === "settings" && <StoreSettingsPanel />}
+          </div>
+        </div>
       </div>
       
       <Footer />
