@@ -120,6 +120,21 @@ export default function CheckoutPage() {
     formData.pincode.trim().length === 6 &&
     formData.termsAccepted
 
+  const getPayBlockReason = () => {
+    if (settingsLoading) return "Loading checkout settings…"
+    if (!formData.firstName.trim() || !formData.lastName.trim()) return "Enter your full name above"
+    if (!formData.email.trim()) return "Enter your email above"
+    if (formData.phone.trim().length < 10) return "Enter a valid 10-digit phone number"
+    if (!formData.address.trim() || !formData.city.trim() || formData.pincode.trim().length !== 6) {
+      return "Complete your delivery address (including 6-digit PIN)"
+    }
+    if (!formData.termsAccepted) return "Tick “I agree to the Terms…” checkbox above to unlock Pay"
+    return ""
+  }
+
+  const payBlockReason = getPayBlockReason()
+  const canPay = isFormValid() && !settingsLoading
+
   const handlePayWithRazorpay = useCallback(async () => {
     if (!isFormValid()) {
       setError("Please fill all required fields and accept the terms.")
@@ -561,21 +576,29 @@ export default function CheckoutPage() {
 
             <Card className="bg-[#f7f1be] border-0 shadow-xl">
               <CardContent className="p-6 space-y-4">
-                <div className="flex items-start space-x-2">
+                <div className="flex items-start gap-3 p-3 rounded-xl border border-primary/30 bg-white">
                   <Checkbox
                     id="termsAccepted"
                     checked={formData.termsAccepted}
                     onCheckedChange={(checked) => handleInputChange("termsAccepted", checked as boolean)}
-                    className="mt-1"
+                    className="mt-0.5 h-6 w-6 shrink-0 border-2 border-[#7f1d1d] bg-white data-[state=checked]:bg-[#7f1d1d] data-[state=checked]:border-[#7f1d1d] data-[state=checked]:text-white shadow-sm"
                   />
-                  <Label htmlFor="termsAccepted" className="text-primary font-medium text-sm leading-relaxed">
+                  <label htmlFor="termsAccepted" className="block flex-1 min-w-0 text-primary font-medium text-sm leading-relaxed cursor-pointer">
                     I agree to the{" "}
-                    <Link href="/terms" className="text-accent hover:underline" target="_blank">Terms of Service</Link>
+                    <Link href="/terms" className="text-accent hover:underline inline" target="_blank" onClick={(e) => e.stopPropagation()}>
+                      Terms of Service
+                    </Link>
                     ,{" "}
-                    <Link href="/privacy" className="text-accent hover:underline" target="_blank">Privacy Policy</Link>
+                    <Link href="/privacy" className="text-accent hover:underline inline" target="_blank" onClick={(e) => e.stopPropagation()}>
+                      Privacy Policy
+                    </Link>
                     , and{" "}
-                    <Link href="/returns" className="text-accent hover:underline" target="_blank">Refund Policy</Link>.
-                  </Label>
+                    <Link href="/returns" className="text-accent hover:underline inline" target="_blank" onClick={(e) => e.stopPropagation()}>
+                      Refund Policy
+                    </Link>
+                    .
+                    <span className="block text-xs text-primary/60 mt-1 font-normal">Required to unlock payment</span>
+                  </label>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-green-50 border border-green-200">
@@ -589,26 +612,32 @@ export default function CheckoutPage() {
                   <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
                 )}
 
-                <div className="flex justify-between pt-2">
+                {!canPay && !isPaying && payBlockReason && (
+                  <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    {payBlockReason}
+                  </p>
+                )}
+
+                <div className="flex flex-col sm:flex-row justify-between gap-3 pt-2">
                   <Link href="/cart">
-                    <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/10">
+                    <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/10 w-full sm:w-auto">
                       <ArrowLeft className="w-4 h-4 mr-2" />
                       Back to Cart
                     </Button>
                   </Link>
                   <Button
-                    className="bg-gradient-to-r from-accent to-amber-500 hover:from-accent/90 hover:to-amber-500/90 text-white"
+                    className="bg-gradient-to-r from-accent to-amber-500 hover:from-accent/90 hover:to-amber-500/90 text-white w-full sm:w-auto disabled:opacity-60"
                     onClick={handlePayWithRazorpay}
-                    disabled={!isFormValid() || isPaying || settingsLoading}
+                    disabled={!canPay || isPaying}
                   >
                     {isPaying ? (
-                      <span className="flex items-center">
+                      <span className="flex items-center justify-center">
                         <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                         Processing...
                       </span>
                     ) : (
-                      <span className="flex items-center">
-                        <Lock className="w-4 h-4 mr-2" />
+                      <span className="flex items-center justify-center">
+                        {canPay ? <Shield className="w-4 h-4 mr-2" /> : <Lock className="w-4 h-4 mr-2" />}
                         Pay ₹{total.toLocaleString("en-IN")} via Razorpay
                       </span>
                     )}

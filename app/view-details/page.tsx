@@ -85,6 +85,7 @@ export default function ProductDetailsPage() {
       image: product.images?.[0] || "/placeholder.svg",
       description: product.description,
       inStock: product.inStock,
+      quantity: quantity,
     })
 
     toast({

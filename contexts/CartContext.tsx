@@ -132,10 +132,10 @@ export const useCart = () => {
 
 // Cart utility functions
 export const cartUtils = {
-  addToCart: (dispatch: React.Dispatch<CartAction>, item: Omit<CartItem, 'quantity'>) => {
+  addToCart: (dispatch: React.Dispatch<CartAction>, item: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
     dispatch({
       type: 'ADD_ITEM',
-      payload: { ...item, quantity: 1 }
+      payload: { ...item, quantity: item.quantity ?? 1 } as CartItem
     })
   },
   
