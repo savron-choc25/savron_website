@@ -676,7 +676,7 @@ export default function SavronHomepage() {
                 className="w-fit bg-gradient-to-r from-primary/15 to-accent/15 border-primary/30 text-primary font-semibold px-4 py-2 shadow-lg"
               >
                 <Crown className="w-4 h-4 mr-2" />
-                Since 1952
+                Since 2024
               </Badge>
               <h2 className="text-4xl lg:text-5xl font-serif font-bold text-balance leading-tight">
                 Three Generations of
@@ -685,14 +685,14 @@ export default function SavronHomepage() {
                 </span>
               </h2>
               <p className="text-muted-foreground text-xl text-pretty leading-relaxed font-light max-w-lg">
-                Founded in 1952, Savron has been perfecting the art of chocolate making for over seven decades. Our
+                Founded in 2024, Savron has been perfecting the art of chocolate making since day one. Our
                 master chocolatiers combine traditional European techniques with innovative flavor combinations to
                 create truly exceptional chocolates that have won international acclaim.
               </p>
               <div className="grid grid-cols-2 gap-8">
                 <div className="text-center p-8 bg-gradient-to-br from-primary/8 to-accent/8 rounded-2xl border border-primary/20 transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl">
                   <div className="text-4xl font-serif font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
-                    70+
+                    2+
                   </div>
                   <div className="text-sm text-muted-foreground font-semibold">Years of Excellence</div>
                 </div>

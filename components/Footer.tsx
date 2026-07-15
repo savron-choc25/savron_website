@@ -24,7 +24,7 @@ export default function Footer() {
               />
             </div>
             <p className="text-base opacity-90 text-pretty leading-relaxed font-light mt-2">
-              Crafting exceptional chocolates since 1952. Experience luxury in every bite of our artisan creations.
+              Crafting exceptional chocolates since 2024. Experience luxury in every bite of our artisan creations.
             </p>
             <div className="flex space-x-6">
               <div className="w-10 h-10 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 cursor-pointer">
