@@ -3,6 +3,7 @@ import { RotateCcw, Phone, Mail } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import { BUSINESS } from "@/lib/checkout-constants"
 
 export default function ReturnsPage() {
   const steps = [
@@ -97,8 +98,8 @@ export default function ReturnsPage() {
                 </p>
                 <p className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-accent" />
-                  <a href="mailto:savron1785@gmail.com" className="hover:text-primary transition-colors">
-                    savron1785@gmail.com
+                  <a href={`mailto:${BUSINESS.email}`} className="hover:text-primary transition-colors">
+                    {BUSINESS.email}
                   </a>
                 </p>
                 <p>

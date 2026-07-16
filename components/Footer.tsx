@@ -1,6 +1,7 @@
 import Link from "next/link"
-import { Instagram, Facebook, Twitter } from "lucide-react"
+import { Instagram, Facebook } from "lucide-react"
 import Image from "next/image"
+import { BUSINESS } from "@/lib/checkout-constants"
 
 export default function Footer() {
   return (
@@ -27,15 +28,24 @@ export default function Footer() {
               Crafting exceptional chocolates since 2024. Experience luxury in every bite of our artisan creations.
             </p>
             <div className="flex space-x-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 cursor-pointer">
+              <a
+                href="https://www.instagram.com/savron_chocolats?igsh=MWY4OHA0dmhyajIzZw=="
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Savron on Instagram"
+                className="w-10 h-10 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300"
+              >
                 <Instagram className="w-5 h-5 text-accent" />
-              </div>
-              <div className="w-10 h-10 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 cursor-pointer">
+              </a>
+              <a
+                href="https://www.facebook.com/share/196bbVE2Fr/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Savron on Facebook"
+                className="w-10 h-10 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300"
+              >
                 <Facebook className="w-5 h-5 text-accent" />
-              </div>
-              <div className="w-10 h-10 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 cursor-pointer">
-                <Twitter className="w-5 h-5 text-accent" />
-              </div>
+              </a>
             </div>
           </div>
 
@@ -84,6 +94,14 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-lg mb-6 text-accent">Support</h4>
             <ul className="space-y-3 text-base opacity-90">
+              <li>
+                <a
+                  href={`mailto:${BUSINESS.email}`}
+                  className="hover:text-accent transition-colors duration-300 font-light"
+                >
+                  {BUSINESS.email}
+                </a>
+              </li>
               <li>
                 <Link href="/contact" className="hover:text-accent transition-colors duration-300 font-light">
                   Contact Us

@@ -7,6 +7,7 @@ import { CartProvider } from "@/contexts/CartContext"
 import { ToastProvider } from "@/contexts/ToastContext"
 import { Toaster } from "@/components/ui/simple-toaster"
 import FloatingContactButtons from "@/components/FloatingContactButtons"
+import BusinessJsonLd from "@/components/BusinessJsonLd"
 import "./globals.css"
 
 const spaceGrotesk = Space_Grotesk({
@@ -38,6 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${spaceGrotesk.variable} ${dmSans.variable} antialiased`}>
+        <BusinessJsonLd />
         <CartProvider>
           <ToastProvider>
             <Suspense fallback={null}>{children}</Suspense>

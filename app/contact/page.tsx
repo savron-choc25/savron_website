@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { MapPin, Phone, Mail, Clock, Send, ExternalLink, Factory } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import { BUSINESS } from "@/lib/checkout-constants"
 
 const STORE_LOCATION = {
   name: "Savron Chocolate Co.",
@@ -47,7 +48,8 @@ export default function ContactPage() {
     {
       icon: <Mail className="h-5 w-5" />,
       title: "Email Us",
-      details: ["savron1785@gmail.com"],
+      details: [BUSINESS.email],
+      link: `mailto:${BUSINESS.email}`,
     },
     {
       icon: <Clock className="h-5 w-5" />,
